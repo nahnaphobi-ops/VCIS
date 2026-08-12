@@ -1,0 +1,123 @@
+@import 'tailwindcss';
+
+:root {
+  --navy: #002147;
+  --navy-deep: #00152e;
+  --navy-soft: #0a3358;
+  --orange: #ff6600;
+  --orange-bright: #ff8533;
+  --orange-glow: rgba(255, 102, 0, 0.35);
+  --cream: #f7f4ef;
+  --cream-muted: #e8e2d8;
+  --ink: #0c1a2a;
+  --muted: #5a6a7a;
+  --white: #ffffff;
+
+  --font-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-body: 'Outfit', 'Segoe UI', sans-serif;
+
+  color: var(--ink);
+  background: var(--cream);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
+  overflow-x: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  margin: 0;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#root {
+  min-height: 100svh;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display);
+  overflow-wrap: break-word;
+}
+
+::selection {
+  background: var(--orange);
+  color: var(--white);
+}
+
+a {
+  text-decoration: none;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.section-pad {
+  padding-inline: 1rem;
+  padding-block: 3.5rem;
+}
+
+@media (min-width: 640px) {
+  .section-pad {
+    padding-inline: 1.25rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .section-pad {
+    padding-inline: 2rem;
+    padding-block: 5.5rem;
+  }
+}
+
+.heading-display {
+  font-size: clamp(1.85rem, 7vw, 3rem);
+  line-height: 1.15;
+}
+
+@media (min-width: 768px) {
+  .heading-display {
+    font-size: 3rem;
+  }
+}
