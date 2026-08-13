@@ -102,7 +102,7 @@ export function Gallery() {
   const [active, setActive] = useState<(typeof galleryItems)[number] | null>(null)
 
   return (
-    <section id="gallery" className="section-pad bg-[var(--navy-deep)] text-white">
+    <section id="gallery" className="section-pad bg-[var(--cream)]">
       <div className="mx-auto max-w-6xl">
         <motion.div
           className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between"
@@ -112,13 +112,9 @@ export function Gallery() {
           variants={reduceMotion ? undefined : fadeUp}
         >
           <div className="max-w-2xl">
-            <p className="mb-3 text-xs font-semibold tracking-[0.24em] text-[var(--orange-bright)] uppercase">
-              Gallery
-            </p>
-            <h2 className="font-display heading-display font-semibold">
-              Life at Victoria Crest.
-            </h2>
-            <p className="mt-4 text-base leading-relaxed text-white/80 md:text-lg">
+            <p className="kicker">Gallery</p>
+            <h2 className="heading-display text-[var(--navy)]">Life at Victoria Crest.</h2>
+            <p className="mt-4 text-base leading-relaxed text-[var(--muted)] md:text-lg">
               Learning, play, culture, and community — moments from school life in Kumasi.
             </p>
           </div>
@@ -126,28 +122,26 @@ export function Gallery() {
             href={school.facebookUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-semibold tracking-wide text-[#ff8533] no-underline transition hover:text-white"
+            className="text-sm font-bold text-[var(--orange)] no-underline hover:text-[var(--navy)]"
           >
             See more on Facebook →
           </a>
         </motion.div>
 
         <motion.div
-          className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3"
+          className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
           initial={reduceMotion ? false : 'hidden'}
           whileInView="show"
           viewport={viewportLoose}
           variants={reduceMotion ? undefined : staggerFast}
         >
-          {galleryItems.map((item, index) => (
+          {galleryItems.map((item) => (
             <motion.button
               key={item.id}
               type="button"
-              className={`group relative min-h-[14rem] overflow-hidden border border-white/10 bg-white/5 text-left sm:min-h-[15rem] ${
-                index === 0 ? 'sm:col-span-2 sm:min-h-[18rem] lg:min-h-[20rem]' : ''
-              } ${index === 4 ? 'lg:col-span-2' : ''}`}
+              className="group relative min-h-[16rem] overflow-hidden rounded-[12px] text-left shadow-[var(--shadow)]"
               variants={reduceMotion ? undefined : fadeUp}
-              whileHover={reduceMotion ? undefined : { scale: 1.01 }}
+              whileHover={reduceMotion ? undefined : { y: -4 }}
               onClick={() => setActive(item)}
             >
               <img
@@ -157,10 +151,10 @@ export function Gallery() {
                 className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
                 style={{ objectPosition: item.position }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#03152D]/90 via-[#03152D]/15 to-transparent" />
-              <span className="absolute bottom-4 left-4 right-4 text-sm font-semibold tracking-wide">
-                {item.label}
-              </span>
+              <div className="absolute inset-0 bg-[var(--navy)]/0 transition duration-300 group-hover:bg-[var(--orange)]/55" />
+              <div className="absolute inset-x-0 bottom-0 bg-[linear-gradient(transparent,rgba(11,47,54,0.88))] px-4 py-4">
+                <span className="text-sm font-bold tracking-wide text-white">{item.label}</span>
+              </div>
             </motion.button>
           ))}
         </motion.div>
@@ -179,22 +173,18 @@ export function Gallery() {
             aria-label={active.alt}
           >
             <motion.div
-              className="relative max-h-[90vh] w-full max-w-4xl overflow-hidden bg-[#03152D]"
+              className="relative max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-[12px] bg-[var(--navy)]"
               initial={reduceMotion ? false : { opacity: 0, scale: 0.94 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={reduceMotion ? undefined : { opacity: 0, scale: 0.96 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <img
-                src={active.src}
-                alt={active.alt}
-                className="mx-auto max-h-[75vh] w-full object-contain"
-              />
+              <img src={active.src} alt={active.alt} className="mx-auto max-h-[75vh] w-full object-contain" />
               <div className="flex items-center justify-between gap-4 px-4 py-4 sm:px-5">
                 <p className="text-sm font-medium text-white/90">{active.label}</p>
                 <button
                   type="button"
-                  className="min-h-11 rounded-sm border border-white/25 px-4 py-2 text-sm font-semibold text-white"
+                  className="min-h-11 rounded-[10px] border border-white/25 px-4 py-2 text-sm font-semibold text-white"
                   onClick={() => setActive(null)}
                 >
                   Close

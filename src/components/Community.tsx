@@ -1,61 +1,88 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { school } from '../lib/school'
-import { fadeUp, viewportOnce } from '../lib/motion'
+import { fadeUp, staggerFast, viewportOnce } from '../lib/motion'
+import { IconArrow } from './icons'
+
+const posts = [
+  {
+    title: 'Culture day celebrations on campus',
+    date: 'School life',
+    image: '/gallery/culture-day-girls-1.png',
+    position: 'center 25%',
+  },
+  {
+    title: 'Friends, play, and lunch outdoors',
+    date: 'Campus moments',
+    image: '/gallery/lunch-boys.png',
+    position: 'center 40%',
+  },
+  {
+    title: 'A growing family in Kumasi',
+    date: `${school.facebookFollowers} followers`,
+    image: '/gallery/group-steps.png',
+    position: 'center 30%',
+  },
+]
 
 export function Community() {
   const reduceMotion = useReducedMotion()
 
   return (
-    <section
-      id="community"
-      className="section-pad relative overflow-hidden bg-[var(--cream)]"
-    >
-      <motion.div
-        className="pointer-events-none absolute -right-20 top-0 h-64 w-64 rounded-full bg-[var(--orange)]/10 blur-3xl"
-        aria-hidden
-        animate={
-          reduceMotion
-            ? undefined
-            : { scale: [1, 1.15, 1], opacity: [0.55, 0.85, 0.55] }
-        }
-        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="relative mx-auto flex max-w-6xl flex-col items-start justify-between gap-8 md:flex-row md:items-center"
-        initial={reduceMotion ? false : 'hidden'}
-        whileInView="show"
-        viewport={viewportOnce}
-        variants={reduceMotion ? undefined : fadeUp}
-      >
-        <div className="max-w-xl">
-          <p className="mb-3 text-xs font-semibold tracking-[0.24em] text-[var(--orange)] uppercase">
-            Community
-          </p>
-          <h2 className="font-display heading-display font-semibold text-[var(--navy)]">
-            Part of a growing family in Kumasi.
-          </h2>
-          <p className="mt-5 text-base leading-relaxed text-[var(--muted)] md:text-lg">
-            Follow school life, updates, and celebrations on Facebook — where{' '}
-            <span className="font-semibold text-[var(--navy)]">
-              {school.facebookFollowers} followers
-            </span>{' '}
+    <section id="community" className="section-pad bg-[var(--cream)]">
+      <div className="mx-auto max-w-6xl">
+        <motion.div
+          className="mx-auto max-w-2xl text-center"
+          initial={reduceMotion ? false : 'hidden'}
+          whileInView="show"
+          viewport={viewportOnce}
+          variants={reduceMotion ? undefined : fadeUp}
+        >
+          <p className="kicker">Community</p>
+          <h2 className="heading-display text-[var(--navy)]">Read all our school life updates.</h2>
+          <p className="mt-4 text-base leading-relaxed text-[var(--muted)] md:text-lg">
+            Follow celebrations, campus moments, and family news on Facebook — where{' '}
+            <span className="font-semibold text-[var(--navy)]">{school.facebookFollowers} followers</span>{' '}
             stay connected with Victoria Crest.
           </p>
-        </div>
-        <motion.a
-          href={school.facebookUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex w-full items-center justify-center gap-3 rounded-sm bg-[var(--navy)] px-6 py-3.5 text-sm font-semibold tracking-wide text-white no-underline sm:w-auto"
-          whileHover={reduceMotion ? undefined : { scale: 1.03, backgroundColor: '#0a3358' }}
-          whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+        </motion.div>
+
+        <motion.div
+          className="mt-12 grid gap-6 md:grid-cols-3"
+          initial={reduceMotion ? false : 'hidden'}
+          whileInView="show"
+          viewport={viewportOnce}
+          variants={reduceMotion ? undefined : staggerFast}
         >
-          <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current" aria-hidden>
-            <path d="M14 8h3V4h-3c-2.8 0-5 2.2-5 5v2H6v4h3v8h4v-8h3.2l.8-4H13V9c0-.6.4-1 1-1z" />
-          </svg>
-          Visit our Facebook page
-        </motion.a>
-      </motion.div>
+          {posts.map((post) => (
+            <motion.article
+              key={post.title}
+              className="card overflow-hidden"
+              variants={reduceMotion ? undefined : fadeUp}
+            >
+              <div className="h-48 overflow-hidden">
+                <img
+                  src={post.image}
+                  alt=""
+                  className="h-full w-full object-cover"
+                  style={{ objectPosition: post.position }}
+                />
+              </div>
+              <div className="p-6">
+                <p className="text-xs font-bold tracking-[0.16em] text-[var(--orange)] uppercase">{post.date}</p>
+                <h3 className="mt-2 text-lg font-extrabold text-[var(--navy)]">{post.title}</h3>
+                <a
+                  href={school.facebookUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-[var(--navy)] hover:text-[var(--orange)]"
+                >
+                  Read More <IconArrow className="h-3.5 w-3.5" />
+                </a>
+              </div>
+            </motion.article>
+          ))}
+        </motion.div>
+      </div>
     </section>
   )
 }

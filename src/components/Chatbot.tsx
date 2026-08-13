@@ -62,7 +62,7 @@ export function Chatbot() {
       {open && (
         <section
           id="school-chat"
-          className="mb-3 flex h-[min(30rem,calc(100svh-7rem))] w-[min(20rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-xl border border-white/15 bg-[#03152D] text-white shadow-[0_18px_60px_rgba(0,0,0,0.35)] sm:w-80"
+          className="mb-3 flex h-[min(30rem,calc(100svh-7rem))] w-[min(20rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-[12px] border border-white/15 bg-[var(--navy)] text-white shadow-[0_18px_60px_rgba(0,0,0,0.35)] sm:w-80"
           aria-label="Victoria Crest chat assistant"
         >
           <header className="flex items-center justify-between border-b border-white/10 px-4 py-3">
@@ -86,7 +86,7 @@ export function Chatbot() {
                 key={`${message.role}-${index}`}
                 className={`max-w-[88%] rounded-lg px-3 py-2 text-sm leading-relaxed ${
                   message.role === 'user'
-                    ? 'ml-auto bg-[#EF5B04] text-white'
+                    ? 'ml-auto bg-[var(--orange)] text-white'
                     : 'bg-white/10 text-white/90'
                 }`}
               >
@@ -112,12 +112,12 @@ export function Chatbot() {
                 onChange={(event) => setInput(event.target.value)}
                 placeholder="Ask about the school..."
                 maxLength={1000}
-                className="min-w-0 flex-1 rounded-md border border-white/15 bg-white/10 px-3 py-2 text-sm text-white outline-none placeholder:text-white/40 focus:border-[#EF5B04]"
+                className="min-w-0 flex-1 rounded-[10px] border border-white/15 bg-white/10 px-3 py-2 text-sm text-white outline-none placeholder:text-white/40 focus:border-[var(--orange)]"
               />
               <button
                 type="submit"
                 disabled={loading || !input.trim()}
-                className="rounded-md bg-[#EF5B04] px-3 text-sm font-semibold text-white transition hover:bg-[#ff7330] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-white"
+                className="rounded-[10px] bg-[var(--orange)] px-3 text-sm font-semibold text-white transition hover:bg-[var(--orange-deep)] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-white"
               >
                 Send
               </button>
@@ -137,7 +137,7 @@ export function Chatbot() {
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
-        className="ml-auto flex items-center gap-2 rounded-full bg-[#EF5B04] px-4 py-3 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,0,0,0.25)] transition hover:-translate-y-0.5 hover:bg-[#ff7330] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        className="ml-auto flex items-center gap-2 rounded-full bg-[var(--orange)] px-4 py-3 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,0,0,0.25)] transition hover:-translate-y-0.5 hover:bg-[var(--orange-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
         aria-expanded={open}
         aria-controls="school-chat"
       >

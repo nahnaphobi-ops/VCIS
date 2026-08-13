@@ -1,116 +1,77 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { school } from '../lib/school'
-import { fadeUp, staggerFast, viewportOnce } from '../lib/motion'
+import { fadeUp, viewportOnce } from '../lib/motion'
+import { IconArrow, IconCheck } from './icons'
 
-const highlights = [
-  { label: 'Established', value: school.established },
-  { label: 'Location', value: school.location },
-  { label: 'Motto', value: school.motto },
-  { label: 'Community', value: `${school.facebookFollowers} followers` },
-]
-
-const values = [
-  {
-    title: 'Knowledge',
-    blurb: 'Curiosity lit by learning — an open book and a flame for every learner.',
-    accent: 'Book & flame',
-  },
-  {
-    title: 'Achievement',
-    blurb: 'Academic excellence pursued with discipline, pride, and purpose.',
-    accent: 'Graduation cap',
-  },
-  {
-    title: 'Global outlook',
-    blurb: 'An international mindset that prepares students for a connected world.',
-    accent: 'Globe',
-  },
-  {
-    title: 'Growth',
-    blurb: 'Character and confidence that take root and flourish over time.',
-    accent: 'Tree',
-  },
+const points = [
+  'Character-led classrooms guided by Integrity and Excellence',
+  'Pathways from Early Years through Junior High',
+  'A warm Kumasi community around every learner',
+  'Curiosity, achievement, and a global outlook in daily school life',
 ]
 
 export function About() {
   const reduceMotion = useReducedMotion()
 
   return (
-    <section id="about" className="section-pad bg-[var(--cream)]">
-      <div className="mx-auto max-w-6xl">
+    <section id="about" className="section-pad bg-white">
+      <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2 lg:gap-16">
         <motion.div
-          className="max-w-3xl"
           initial={reduceMotion ? false : 'hidden'}
           whileInView="show"
           viewport={viewportOnce}
           variants={reduceMotion ? undefined : fadeUp}
         >
-          <p className="mb-3 text-xs font-semibold tracking-[0.24em] text-[var(--orange)] uppercase">
-            About the school
-          </p>
-          <h2 className="font-display heading-display font-semibold text-[var(--navy)]">
-            Victoria Crest International School
+          <p className="kicker">About Us</p>
+          <h2 className="heading-display text-[var(--navy)]">
+            We’ll keep your child’s learning safe, purposeful, and proud.
           </h2>
-          <p className="mt-6 text-base leading-relaxed text-[var(--muted)] md:text-lg">
-            {school.name} is a school community in {school.location}, serving families since{' '}
-            {school.established}. Guided by our motto —{' '}
-            <span className="font-medium text-[var(--navy)]">{school.motto}</span> — we raise young
-            people of character who learn with purpose and lead with integrity.
+          <p className="mt-5 text-base leading-relaxed text-[var(--muted)] md:text-lg">
+            {school.name} has served families in {school.location} since {school.established}. Guided
+            by <span className="font-semibold text-[var(--navy)]">{school.motto}</span>, we raise
+            young people who learn with purpose and lead with integrity.
           </p>
-          <p className="mt-4 text-base leading-relaxed text-[var(--muted)] md:text-lg">
-            Our crest carries four promises: knowledge, achievement, a global outlook, and lasting
-            growth. Those symbols shape daily school life — from the classroom to the wider
-            community that gathers around every learner.
-          </p>
+          <ul className="mt-6 space-y-3">
+            {points.map((point) => (
+              <li key={point} className="flex items-start gap-3 text-sm leading-relaxed text-[var(--navy)] md:text-base">
+                <IconCheck className="mt-0.5 h-5 w-5 shrink-0 text-[var(--teal)]" />
+                {point}
+              </li>
+            ))}
+          </ul>
+          <a href="#programmes" className="btn btn-primary mt-8">
+            Read More
+            <IconArrow />
+          </a>
         </motion.div>
 
         <motion.div
-          className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+          className="relative mx-auto aspect-[1.05/1] w-full max-w-lg"
           initial={reduceMotion ? false : 'hidden'}
           whileInView="show"
           viewport={viewportOnce}
-          variants={reduceMotion ? undefined : staggerFast}
+          variants={reduceMotion ? undefined : fadeUp}
         >
-          {highlights.map((item) => (
-            <motion.div
-              key={item.label}
-              className="border border-[var(--cream-muted)] bg-white/80 px-5 py-4"
-              variants={reduceMotion ? undefined : fadeUp}
-            >
-              <p className="text-[10px] font-semibold tracking-[0.2em] text-[var(--orange)] uppercase">
-                {item.label}
-              </p>
-              <p className="font-display mt-2 text-xl font-semibold text-[var(--navy)]">
-                {item.value}
-              </p>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        <motion.div
-          className="mt-12 grid gap-4 sm:grid-cols-2"
-          initial={reduceMotion ? false : 'hidden'}
-          whileInView="show"
-          viewport={viewportOnce}
-          variants={reduceMotion ? undefined : staggerFast}
-        >
-          {values.map((value) => (
-            <motion.article
-              key={value.title}
-              className="border border-[var(--cream-muted)] bg-white/70 p-5 transition-shadow duration-300 hover:shadow-[0_12px_32px_rgba(0,33,71,0.08)]"
-              variants={reduceMotion ? undefined : fadeUp}
-              whileHover={reduceMotion ? undefined : { y: -4 }}
-              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-            >
-              <p className="text-[10px] font-semibold tracking-[0.2em] text-[var(--orange)] uppercase">
-                {value.accent}
-              </p>
-              <h3 className="font-display mt-2 text-2xl font-semibold text-[var(--navy)]">
-                {value.title}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{value.blurb}</p>
-            </motion.article>
-          ))}
+          <div className="absolute top-0 left-0 h-[58%] w-[58%] overflow-hidden rounded-[1.25rem] shadow-[var(--shadow)]">
+            <img src="/gallery/school-building.png" alt="Victoria Crest campus building" className="h-full w-full object-cover" />
+          </div>
+          <div className="absolute top-6 right-0 h-[42%] w-[48%] overflow-hidden rounded-[1.25rem] border-4 border-[var(--orange)] shadow-[var(--shadow)]">
+            <img
+              src="/gallery/lunch-boys.png"
+              alt="Students sharing lunch outdoors"
+              className="h-full w-full object-cover object-[center_35%]"
+            />
+          </div>
+          <div className="absolute bottom-0 left-8 h-[38%] w-[55%] overflow-hidden rounded-[1.25rem] border-4 border-[var(--teal)] shadow-[var(--shadow)]">
+            <img
+              src="/gallery/culture-day-girls-2.png"
+              alt="Learners celebrating culture day"
+              className="h-full w-full object-cover object-[center_30%]"
+            />
+          </div>
+          <div className="absolute right-6 bottom-8 h-20 w-20 overflow-hidden rounded-full bg-white shadow-lg ring-4 ring-[var(--navy)]">
+            <img src="/crest.png" alt="" className="h-full w-full object-contain" />
+          </div>
         </motion.div>
       </div>
     </section>
