@@ -1,0 +1,12 @@
+---
+description: Commit locally only; never push or touch Vercel
+alwaysApply: true
+---
+
+# Git and Vercel
+
+- Commit locally when asked. Do **not** `git push`, `git push -u`, or otherwise publish to GitHub.
+- Leave all pushes to the repo owner (`nahnaphobi-ops`) so Vercel sees their GitHub identity.
+- Do **not** run Vercel CLI, change Vercel project/team settings, or trigger deploys.
+- Do **not** update git `user.name` / `user.email` config.
+- Hobby Vercel rejects commits authored as `openhands@all-hands.dev`. Never try to “fix” that by adding collaborators or deploying as `openhands-agent`.
