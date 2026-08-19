@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { school, whatsappEnquireUrl } from '../lib/school'
 import { easeOutExpo, fadeUp, staggerContainer } from '../lib/motion'
+import { scrollToSection } from '../lib/scrollToSection'
 import { IconArrow } from './icons'
 
 export function Hero() {
@@ -44,7 +45,14 @@ export function Hero() {
             community, and a global outlook.
           </motion.p>
           <motion.div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center" variants={reduceMotion ? undefined : fadeUp}>
-            <a href="#programmes" className="btn btn-primary">
+            <a
+              href="#programmes"
+              className="btn btn-primary"
+              onClick={(event) => {
+                event.preventDefault()
+                scrollToSection('#programmes', { behavior: reduceMotion ? 'auto' : 'smooth' })
+              }}
+            >
               Our Programmes
               <IconArrow />
             </a>

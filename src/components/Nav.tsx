@@ -1,7 +1,8 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { useState } from 'react'
+import { useEffect, useState, type MouseEvent } from 'react'
 import { school } from '../lib/school'
 import { transitionFast } from '../lib/motion'
+import { scrollToSection } from '../lib/scrollToSection'
 import { IconFacebook, IconPhone, IconPin } from './icons'
 
 const links = [
@@ -16,6 +17,79 @@ const links = [
 export function Nav() {
   const reduceMotion = useReducedMotion()
   const [open, setOpen] = useState(false)
+  const [activeHref, setActiveHref] = useState('#top')
+
+  useEffect(() => {
+    if (!window.location.hash) return
+    const hash = window.location.hash
+    const timer = window.setTimeout(() => {
+      scrollToSection(hash, { behavior: 'auto' })
+      setActiveHref(hash)
+    }, 50)
+    return () => window.clearTimeout(timer)
+  }, [])
+
+  useEffect(() => {
+    const sections = links
+      .map((link) => document.getElementById(link.href.slice(1)))
+      .filter((section): section is HTMLElement => Boolean(section))
+
+    if (sections.length === 0) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
+        if (visible?.target.id) setActiveHref(`#${visible.target.id}`)
+      },
+      { rootMargin: '-20% 0px -60% 0px', threshold: [0.1, 0.25, 0.5] },
+    )
+
+    sections.forEach((section) => observer.observe(section))
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (!open) return
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') setOpen(false)
+    }
+
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [open])
+
+  function waitForMenuClose() {
+    return new Promise<void>((resolve) => {
+      const started = performance.now()
+      const tick = () => {
+        if (!document.getElementById('mobile-nav') || performance.now() - started > 700) {
+          resolve()
+          return
+        }
+        requestAnimationFrame(tick)
+      }
+      tick()
+    })
+  }
+
+  function goToSection(event: MouseEvent<HTMLAnchorElement>, href: string) {
+    if (!href.startsWith('#')) return
+    event.preventDefault()
+    const wasOpen = open
+    setOpen(false)
+    setActiveHref(href)
+
+    const behavior: ScrollBehavior = reduceMotion ? 'auto' : 'smooth'
+    void (async () => {
+      if (wasOpen) await waitForMenuClose()
+      if (!scrollToSection(href, { behavior })) {
+        window.location.hash = href
+      }
+    })()
+  }
 
   return (
     <>
@@ -44,8 +118,12 @@ export function Nav() {
       </div>
 
       <header className="sticky top-0 z-50 border-b border-[var(--cream-muted)] bg-white shadow-[0_8px_24px_rgba(11,47,54,0.06)]">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-5 md:px-8">
-          <a href="#top" className="flex min-w-0 items-center gap-2.5 text-[var(--navy)] no-underline">
+        <div id="site-nav-bar" className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-5 md:px-8">
+          <a
+            href="#top"
+            onClick={(event) => goToSection(event, '#top')}
+            className="flex min-w-0 items-center gap-2.5 text-[var(--navy)] no-underline"
+          >
             <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[var(--cream)] p-0.5 sm:h-12 sm:w-12">
               <img src="/crest.png" alt="" className="h-full w-full object-contain" />
             </span>
@@ -60,17 +138,26 @@ export function Nav() {
           </a>
 
           <nav className="hidden items-center gap-6 lg:flex" aria-label="Primary">
-            {links.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="group relative text-sm font-semibold text-[var(--navy)] no-underline"
-              >
-                {link.label}
-                <span className="absolute inset-x-0 -bottom-1 h-0.5 origin-left scale-x-0 rounded-full bg-[var(--orange)] transition-transform duration-300 group-hover:scale-x-100" />
-              </a>
-            ))}
-            <a href="#contact" className="btn btn-primary">
+            {links.map((link) => {
+              const current = activeHref === link.href
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  aria-current={current ? 'page' : undefined}
+                  onClick={(event) => goToSection(event, link.href)}
+                  className="group relative text-sm font-semibold text-[var(--navy)] no-underline"
+                >
+                  {link.label}
+                  <span
+                    className={`absolute inset-x-0 -bottom-1 h-0.5 origin-left rounded-full bg-[var(--orange)] transition-transform duration-300 ${
+                      current ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                    }`}
+                  />
+                </a>
+              )
+            })}
+            <a href="#contact" onClick={(event) => goToSection(event, '#contact')} className="btn btn-primary">
               Enquire Now
             </a>
           </nav>
@@ -93,8 +180,9 @@ export function Nav() {
 
         <AnimatePresence>
           {open && (
-            <motion.div
+            <motion.nav
               id="mobile-nav"
+              aria-label="Primary"
               className="overflow-hidden border-t border-[var(--cream-muted)] bg-white px-5 lg:hidden"
               initial={reduceMotion ? false : { height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
@@ -102,31 +190,46 @@ export function Nav() {
               transition={transitionFast}
             >
               <div className="flex flex-col gap-1 py-4">
-                {links.map((link, i) => (
-                  <motion.a
-                    key={link.href}
-                    href={link.href}
-                    className="rounded-[10px] px-2 py-3 text-base font-semibold text-[var(--navy)] no-underline hover:bg-[var(--cream)]"
-                    initial={reduceMotion ? false : { opacity: 0, x: -12 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.04 * i, duration: 0.3 }}
-                    onClick={() => setOpen(false)}
-                  >
-                    {link.label}
-                  </motion.a>
-                ))}
+                {links.map((link, i) => {
+                  const current = activeHref === link.href
+                  return (
+                    <motion.a
+                      key={link.href}
+                      href={link.href}
+                      aria-current={current ? 'page' : undefined}
+                      className={`rounded-[10px] px-2 py-3 text-base font-semibold text-[var(--navy)] no-underline ${
+                        current ? 'bg-[var(--cream)]' : 'hover:bg-[var(--cream)]'
+                      }`}
+                      initial={reduceMotion ? false : { opacity: 0, x: -12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.04 * i, duration: 0.3 }}
+                      onClick={(event) => goToSection(event, link.href)}
+                    >
+                      {link.label}
+                    </motion.a>
+                  )
+                })}
                 <a
                   href="#contact"
                   className="btn btn-primary mt-2"
-                  onClick={() => setOpen(false)}
+                  onClick={(event) => goToSection(event, '#contact')}
                 >
                   Enquire Now
                 </a>
               </div>
-            </motion.div>
+            </motion.nav>
           )}
         </AnimatePresence>
       </header>
+
+      {open ? (
+        <button
+          type="button"
+          className="fixed inset-0 z-40 bg-[var(--navy)]/25 lg:hidden"
+          aria-label="Close menu"
+          onClick={() => setOpen(false)}
+        />
+      ) : null}
     </>
   )
 }

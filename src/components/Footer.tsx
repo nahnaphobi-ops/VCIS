@@ -1,4 +1,6 @@
+import { type MouseEvent } from 'react'
 import { school, whatsappEnquireUrl } from '../lib/school'
+import { scrollToSection } from '../lib/scrollToSection'
 import { IconFacebook, IconPhone, IconPin } from './icons'
 
 const usefulLinks = [
@@ -17,6 +19,11 @@ const services = [
 
 export function Footer() {
   const year = new Date().getFullYear()
+
+  function goToSection(event: MouseEvent<HTMLAnchorElement>, href: string) {
+    event.preventDefault()
+    scrollToSection(href)
+  }
 
   return (
     <footer className="text-white">
@@ -58,7 +65,11 @@ export function Footer() {
         <div className="mx-auto max-w-6xl px-4 sm:px-5 md:px-8">
         <div className="grid gap-10 pb-10 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <a href="#top" className="flex items-center gap-3 text-white no-underline">
+            <a
+              href="#top"
+              onClick={(event) => goToSection(event, '#top')}
+              className="flex items-center gap-3 text-white no-underline"
+            >
               <span className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-white p-0.5">
                 <img src="/crest.png" alt="" className="h-full w-full object-contain" />
               </span>
@@ -79,7 +90,11 @@ export function Footer() {
             <ul className="mt-4 space-y-2 text-sm text-white/75">
               {usefulLinks.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className="hover:text-[var(--orange-bright)]">
+                  <a
+                    href={link.href}
+                    className="hover:text-[var(--orange-bright)]"
+                    onClick={(event) => goToSection(event, link.href)}
+                  >
                     {link.label}
                   </a>
                 </li>
@@ -92,7 +107,11 @@ export function Footer() {
             <ul className="mt-4 space-y-2 text-sm text-white/75">
               {services.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className="hover:text-[var(--orange-bright)]">
+                  <a
+                    href={link.href}
+                    className="hover:text-[var(--orange-bright)]"
+                    onClick={(event) => goToSection(event, link.href)}
+                  >
                     {link.label}
                   </a>
                 </li>

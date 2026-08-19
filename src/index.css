@@ -43,6 +43,10 @@ html {
   overflow-x: hidden;
 }
 
+main > section {
+  scroll-margin-top: 5.5rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -63,10 +67,13 @@ body {
   overflow-x: hidden;
 }
 
-img,
-video {
-  max-width: 100%;
-  height: auto;
+@layer base {
+  img,
+  video {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
 }
 
 h1,

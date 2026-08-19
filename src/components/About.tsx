@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { school } from '../lib/school'
 import { fadeUp, viewportOnce } from '../lib/motion'
+import { scrollToSection } from '../lib/scrollToSection'
 import { IconArrow, IconCheck } from './icons'
 
 const points = [
@@ -39,7 +40,14 @@ export function About() {
               </li>
             ))}
           </ul>
-          <a href="#programmes" className="btn btn-primary mt-8">
+          <a
+            href="#programmes"
+            className="btn btn-primary mt-8"
+            onClick={(event) => {
+              event.preventDefault()
+              scrollToSection('#programmes')
+            }}
+          >
             Read More
             <IconArrow />
           </a>

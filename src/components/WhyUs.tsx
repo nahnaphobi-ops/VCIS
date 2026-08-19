@@ -26,6 +26,27 @@ const reasons = [
   },
 ]
 
+function CirclePhoto({
+  wrapClassName,
+  ringClassName,
+  src,
+  imgClassName,
+}: {
+  wrapClassName: string
+  ringClassName: string
+  src: string
+  imgClassName: string
+}) {
+  return (
+    <div className={`absolute ${wrapClassName}`}>
+      <div className="h-full w-full overflow-hidden rounded-full bg-[var(--navy-soft)] shadow-[var(--shadow)]">
+        <img src={src} alt="" className={`block size-full max-w-none object-cover ${imgClassName}`} />
+      </div>
+      <div className={`pointer-events-none absolute inset-0 rounded-full ${ringClassName}`} />
+    </div>
+  )
+}
+
 export function WhyUs() {
   const reduceMotion = useReducedMotion()
 
@@ -55,18 +76,30 @@ export function WhyUs() {
 
           <div className="mt-12 grid items-center gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
             <div className="relative mx-auto aspect-square w-full max-w-md">
-              <div className="absolute inset-[12%] overflow-hidden rounded-full border-[10px] border-[var(--cream)] shadow-[var(--shadow)]">
-                <img src="/gallery/group-steps.png" alt="" className="h-full w-full object-cover object-[center_28%]" />
-              </div>
-              <div className="absolute top-2 right-8 h-24 w-24 overflow-hidden rounded-full border-4 border-white shadow-lg">
-                <img src="/gallery/culture-day-young.png" alt="" className="h-full w-full object-cover object-[center_30%]" />
-              </div>
-              <div className="absolute bottom-6 left-2 h-28 w-28 overflow-hidden rounded-full border-4 border-[var(--orange)] shadow-lg">
-                <img src="/gallery/play-swings.png" alt="" className="h-full w-full object-cover object-[center_40%]" />
-              </div>
-              <div className="absolute right-0 bottom-16 h-20 w-20 overflow-hidden rounded-full border-4 border-[var(--teal)] shadow-lg">
-                <img src="/gallery/culture-day-boy.png" alt="" className="h-full w-full object-cover object-[center_25%]" />
-              </div>
+              <CirclePhoto
+                wrapClassName="inset-[12%]"
+                ringClassName="ring-8 ring-[var(--cream-muted)]"
+                src="/gallery/group-steps.png"
+                imgClassName="origin-center scale-110 object-[center_42%]"
+              />
+              <CirclePhoto
+                wrapClassName="top-2 right-8 h-24 w-24"
+                ringClassName="ring-4 ring-white"
+                src="/gallery/culture-day-young.png"
+                imgClassName="origin-center scale-125 object-[center_22%]"
+              />
+              <CirclePhoto
+                wrapClassName="bottom-6 left-2 h-28 w-28"
+                ringClassName="ring-4 ring-[var(--orange)]"
+                src="/gallery/play-swings.png"
+                imgClassName="origin-center scale-125 object-[center_42%]"
+              />
+              <CirclePhoto
+                wrapClassName="right-0 bottom-16 h-20 w-20"
+                ringClassName="ring-4 ring-[var(--teal)]"
+                src="/gallery/culture-day-boy.png"
+                imgClassName="origin-center scale-125 object-[center_30%]"
+              />
             </div>
 
             <motion.ul
