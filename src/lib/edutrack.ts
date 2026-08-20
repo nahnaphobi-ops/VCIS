@@ -79,8 +79,16 @@ export type EduTrackPublicProfile = {
 const SCHOOL_ID =
   import.meta.env.VITE_EDUTRACK_SCHOOL_ID || 'victoria-crest-international-school'
 
-const FUNCTIONS_BASE = (import.meta.env.VITE_EDUTRACK_FUNCTIONS_URL || '').replace(/\/$/, '')
-const ANON_KEY = import.meta.env.VITE_EDUTRACK_ANON_KEY || ''
+// Public Supabase anon key + functions URL are safe to ship in the browser client.
+// Env vars still override these when set on Vercel / .env.local.
+const FUNCTIONS_BASE = (
+  import.meta.env.VITE_EDUTRACK_FUNCTIONS_URL ||
+  'https://egdjzarvzzxafjdcemyy.supabase.co/functions/v1'
+).replace(/\/$/, '')
+
+const ANON_KEY =
+  import.meta.env.VITE_EDUTRACK_ANON_KEY ||
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVnZGp6YXJ2enp4YWZqZGNlbXl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1MzAwOTAsImV4cCI6MjA5NjEwNjA5MH0._uZLXYBbcJhqQOSm_auF591KEe03k6votH57h8Y5FeE'
 
 let cached: { at: number; data: EduTrackPublicProfile | null } | null = null
 const CACHE_MS = 60_000
