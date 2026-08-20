@@ -1,11 +1,13 @@
 import { useState, type FormEvent } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { school, whatsappEnquireUrl } from '../lib/school'
+import { useSchool } from '../lib/useSchool'
 import { fadeUp, viewportOnce } from '../lib/motion'
 import { IconQuote } from './icons'
 
 export function Contact() {
   const reduceMotion = useReducedMotion()
+  const { live } = useSchool()
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [childAge, setChildAge] = useState('')
@@ -124,10 +126,39 @@ export function Contact() {
               <a href={`tel:${school.phoneTel}`} className="font-semibold text-white hover:text-[var(--orange-bright)]">
                 {school.phoneDisplay}
               </a>
+              <span className="text-white/45"> / </span>
+              <a
+                href={`tel:${school.phoneSecondaryTel}`}
+                className="font-semibold text-white hover:text-[var(--orange-bright)]"
+              >
+                {school.phoneSecondaryDisplay}
+              </a>
             </li>
+            {live?.email ? (
+              <li>
+                Email:{' '}
+                <a
+                  href={`mailto:${live.email}`}
+                  className="font-semibold text-white hover:text-[var(--orange-bright)]"
+                >
+                  {live.email}
+                </a>
+              </li>
+            ) : null}
             <li>Location: {school.location}</li>
             <li>Website: {school.website}</li>
           </ul>
+
+          <div className="mt-10 grid gap-3 border-t border-white/15 pt-6 text-sm text-white/75 sm:grid-cols-2">
+            <div>
+              <p className="font-bold text-white">Admissions enquiries</p>
+              <p className="mt-1">Call or WhatsApp for current places and fees.</p>
+            </div>
+            <div>
+              <p className="font-bold text-white">School location</p>
+              <p className="mt-1">{school.location}. Visit by appointment.</p>
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>

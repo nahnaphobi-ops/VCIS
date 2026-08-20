@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import { school, whatsappEnquireUrl } from '../lib/school'
 import { fadeUp, staggerFast, viewportLoose, viewportOnce } from '../lib/motion'
@@ -6,21 +7,28 @@ import { IconArrow } from './icons'
 const programmes = [
   {
     title: 'Early Years',
+    age: 'Ages 2–5',
     summary: 'A warm start to school life — play, language, and the habits that make learning feel safe.',
-    image: '/gallery/play-swings.png',
-    position: 'center 40%',
+    focus: 'Language, early numeracy, discovery, creative play, and independence.',
+    images: [
+      { src: '/gallery/early-years-1.png', position: 'center 20%' },
+      { src: '/gallery/early-years-2.png', position: 'center 40%' },
+      { src: '/gallery/early-years-3.png', position: 'center 30%' },
+    ],
   },
   {
     title: 'Primary',
+    age: 'Ages 6–11',
     summary: 'Strong core subjects with character formation — learners who can think, write, and work well with others.',
-    image: '/gallery/students-picnic-girls.png',
-    position: 'center 30%',
+    focus: 'Literacy, numeracy, science, technology, creative expression, and collaboration.',
+    images: [{ src: '/gallery/play-swings.png', position: 'center 40%' }],
   },
   {
     title: 'Junior High',
+    age: 'Ages 12–14',
     summary: 'Deeper academic challenge and guidance as students prepare for the next stage of their education.',
-    image: '/gallery/group-steps.png',
-    position: 'center 28%',
+    focus: 'Subject mastery, critical thinking, leadership, examination readiness, and life skills.',
+    images: [{ src: '/gallery/students-picnic-girls.png', position: 'center 30%' }],
   },
 ]
 
@@ -59,17 +67,48 @@ export function Programmes() {
               variants={reduceMotion ? undefined : fadeUp}
             >
               <div className="relative h-52 overflow-hidden">
-                <img
-                  src={programme.image}
-                  alt=""
-                  className="h-full w-full object-cover"
-                  style={{ objectPosition: programme.position }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[var(--navy)]/45 to-transparent" />
+                {programme.images.length > 1 ? (
+                  <div className="grid h-full grid-cols-2 grid-rows-2 gap-0.5">
+                    <img
+                      src={programme.images[0].src}
+                      alt=""
+                      className="col-span-1 row-span-2 h-full w-full object-cover"
+                      style={{ objectPosition: programme.images[0].position }}
+                    />
+                    <img
+                      src={programme.images[1].src}
+                      alt=""
+                      className="h-full w-full object-cover"
+                      style={{ objectPosition: programme.images[1].position }}
+                    />
+                    <img
+                      src={programme.images[2].src}
+                      alt=""
+                      className="h-full w-full object-cover"
+                      style={{ objectPosition: programme.images[2].position }}
+                    />
+                  </div>
+                ) : (
+                  <img
+                    src={programme.images[0].src}
+                    alt=""
+                    className="h-full w-full object-cover"
+                    style={{ objectPosition: programme.images[0].position }}
+                  />
+                )}
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[var(--navy)]/45 to-transparent" />
               </div>
               <div className="p-6">
-                <h3 className="text-xl font-extrabold text-[var(--navy)]">{programme.title}</h3>
+                <div className="flex items-start justify-between gap-3">
+                  <h3 className="text-xl font-extrabold text-[var(--navy)]">{programme.title}</h3>
+                  <span className="shrink-0 rounded-full bg-[var(--cream)] px-2.5 py-1 text-[10px] font-bold tracking-wide text-[var(--orange)] uppercase">
+                    {programme.age}
+                  </span>
+                </div>
                 <p className="mt-3 text-sm leading-relaxed text-[var(--muted)]">{programme.summary}</p>
+                <p className="mt-4 border-t border-[var(--cream-muted)] pt-4 text-xs leading-relaxed text-[var(--muted)]">
+                  <span className="font-bold text-[var(--navy)]">Learning focus: </span>{programme.focus}
+                </p>
                 <a
                   href={whatsappEnquireUrl(
                     `Hello ${school.shortName}, I would like information about the ${programme.title} programme.`,
@@ -84,6 +123,20 @@ export function Programmes() {
             </motion.article>
           ))}
         </motion.div>
+
+        <div className="mt-12 grid gap-4 rounded-[12px] bg-[var(--navy)] p-6 text-white sm:grid-cols-3 sm:p-8">
+          <div className="sm:col-span-2">
+            <p className="text-xs font-bold tracking-[0.18em] text-[var(--orange-bright)] uppercase">One connected journey</p>
+            <h3 className="mt-2 text-2xl font-extrabold tracking-tight">A consistent standard from first steps to the next stage.</h3>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/75">
+              Each programme is designed to build on the one before it, with regular communication between school and home
+              so learners can transition with confidence.
+            </p>
+          </div>
+          <Link to="/contact" className="btn btn-primary self-end sm:justify-self-end">
+            Ask about placement
+          </Link>
+        </div>
       </div>
     </section>
   )

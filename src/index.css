@@ -1,22 +1,23 @@
 @import 'tailwindcss';
 
 :root {
-  --navy: #0b2f36;
-  --navy-deep: #072428;
-  --navy-soft: #124048;
-  --orange: #f27a3a;
-  --orange-bright: #f58c55;
-  --orange-deep: #e06628;
-  --teal: #3fb199;
-  --teal-bright: #55c4ad;
-  --cream: #f8f9fa;
-  --cream-muted: #e6ebed;
-  --ink: #0b2f36;
-  --muted: #5c6d73;
+  /* Crest palette sampled from school logo — deep navy + crest orange */
+  --navy: #0c1b35;
+  --navy-deep: #06101f;
+  --navy-soft: #163354;
+  --orange: #fc6800;
+  --orange-bright: #ff7e14;
+  --orange-deep: #d95500;
+  --teal: #d6e2ef;
+  --teal-bright: #9bb6d0;
+  --cream: #f6f3ef;
+  --cream-muted: #e9e3db;
+  --ink: #0c1b35;
+  --muted: #5a6575;
   --white: #ffffff;
   --radius: 10px;
-  --shadow: 0 12px 32px rgba(11, 47, 54, 0.08);
-  --shadow-hover: 0 18px 40px rgba(11, 47, 54, 0.14);
+  --shadow: 0 12px 32px rgba(12, 27, 53, 0.08);
+  --shadow-hover: 0 18px 40px rgba(12, 27, 53, 0.14);
 
   --font-display: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
   --font-body: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
@@ -229,9 +230,9 @@ a[href],
 }
 
 .input-field::placeholder {
-  color: #8a9aa0;
+  color: #8a93a3;
 }
 
 .input-field:focus {
-  box-shadow: 0 0 0 3px rgba(63, 177, 153, 0.35);
+  box-shadow: 0 0 0 3px rgba(252, 104, 0, 0.35);
 }

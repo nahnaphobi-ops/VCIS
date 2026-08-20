@@ -43,8 +43,8 @@ export function Faq() {
           <p className="kicker">FAQ</p>
           <h2 className="heading-display text-[var(--navy)]">Do you have any questions?</h2>
           <p className="mt-4 text-base leading-relaxed text-[var(--muted)] md:text-lg">
-            If you do not see your question here, call {school.phoneDisplay} or send us a WhatsApp
-            message and we will help.
+            If you do not see your question here, call {school.phoneDisplay} /{' '}
+            {school.phoneSecondaryDisplay} or send us a WhatsApp message and we will help.
           </p>
         </motion.div>
 

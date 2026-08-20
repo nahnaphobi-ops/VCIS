@@ -1,17 +1,24 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import { school } from '../lib/school'
+import { useSchool } from '../lib/useSchool'
+import { formatStudentCount } from '../lib/edutrack'
 import { fadeUp, staggerFast, viewportOnce } from '../lib/motion'
 import { IconAward, IconBook, IconCalendar, IconUsers } from './icons'
 
-const stats = [
-  { icon: IconCalendar, value: school.established, label: 'Established' },
-  { icon: IconBook, value: '3', label: 'Learning pathways' },
-  { icon: IconUsers, value: school.facebookFollowers, label: 'Community followers' },
-  { icon: IconAward, value: 'Integrity', label: '& Excellence' },
-]
-
 export function Stats() {
   const reduceMotion = useReducedMotion()
+  const { school, live } = useSchool()
+  const studentLabel = formatStudentCount(live?.active_students ?? 0)
+
+  const stats = [
+    { icon: IconCalendar, value: school.established, label: 'Established' },
+    {
+      icon: IconUsers,
+      value: studentLabel || school.facebookFollowers,
+      label: studentLabel ? 'Active learners' : 'Community followers',
+    },
+    { icon: IconBook, value: '3', label: 'Learning pathways' },
+    { icon: IconAward, value: 'Excellence', label: 'Integrity · Purpose' },
+  ]
 
   return (
     <section className="bg-[var(--navy)] text-white">

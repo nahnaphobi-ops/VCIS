@@ -1,9 +1,32 @@
 import { useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { useQuery } from 'convex/react'
 import { school } from '../lib/school'
 import { fadeUp, staggerFast, viewportLoose, viewportOnce } from '../lib/motion'
+import { api } from '../lib/convexApi'
 
 const galleryItems = [
+  {
+    id: 'early-years-1',
+    src: '/gallery/early-years-1.png',
+    alt: 'Early Years learner smiling and making a peace sign on campus',
+    label: 'Early Years smile',
+    position: 'center 20%',
+  },
+  {
+    id: 'early-years-2',
+    src: '/gallery/early-years-2.png',
+    alt: 'Teacher laughing with Early Years children outdoors',
+    label: 'Warm beginnings',
+    position: 'center 40%',
+  },
+  {
+    id: 'early-years-3',
+    src: '/gallery/early-years-3.png',
+    alt: 'Two Early Years girls in school uniform standing together',
+    label: 'Little friends',
+    position: 'center 30%',
+  },
   {
     id: 'picnic-girls',
     src: '/gallery/students-picnic-girls.png',
@@ -100,6 +123,12 @@ const galleryItems = [
 export function Gallery() {
   const reduceMotion = useReducedMotion()
   const [active, setActive] = useState<(typeof galleryItems)[number] | null>(null)
+  const [filter, setFilter] = useState<'all' | 'learning' | 'community'>('all')
+  const visibleItems = galleryItems.filter((item) => {
+    if (filter === 'all') return true
+    const learningIds = ['early-years-1', 'early-years-2', 'early-years-3', 'swings', 'building']
+    return filter === 'learning' ? learningIds.includes(item.id) : !learningIds.includes(item.id)
+  })
 
   return (
     <section id="gallery" className="section-pad bg-[var(--cream)]">
@@ -128,6 +157,24 @@ export function Gallery() {
           </a>
         </motion.div>
 
+        <div className="mt-8 flex flex-wrap gap-2" aria-label="Gallery filters">
+          {(['all', 'learning', 'community'] as const).map((item) => (
+            <button
+              key={item}
+              type="button"
+              onClick={() => setFilter(item)}
+              aria-pressed={filter === item}
+              className={`rounded-[10px] border px-4 py-2 text-xs font-bold tracking-wide uppercase transition ${
+                filter === item
+                  ? 'border-[var(--navy)] bg-[var(--navy)] text-white'
+                  : 'border-[var(--cream-muted)] bg-white text-[var(--navy)] hover:border-[var(--orange)] hover:text-[var(--orange)]'
+              }`}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+
         <motion.div
           className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
           initial={reduceMotion ? false : 'hidden'}
@@ -135,7 +182,7 @@ export function Gallery() {
           viewport={viewportLoose}
           variants={reduceMotion ? undefined : staggerFast}
         >
-          {galleryItems.map((item) => (
+          {visibleItems.map((item) => (
             <motion.button
               key={item.id}
               type="button"
@@ -152,12 +199,14 @@ export function Gallery() {
                 style={{ objectPosition: item.position }}
               />
               <div className="absolute inset-0 bg-[var(--navy)]/0 transition duration-300 group-hover:bg-[var(--orange)]/55" />
-              <div className="absolute inset-x-0 bottom-0 bg-[linear-gradient(transparent,rgba(11,47,54,0.88))] px-4 py-4">
+              <div className="absolute inset-x-0 bottom-0 bg-[linear-gradient(transparent,rgba(12,27,53,0.88))] px-4 py-4">
                 <span className="text-sm font-bold tracking-wide text-white">{item.label}</span>
               </div>
             </motion.button>
           ))}
         </motion.div>
+
+        {import.meta.env.VITE_CONVEX_URL ? <ManagedPhotos /> : null}
       </div>
 
       <AnimatePresence>
@@ -195,5 +244,31 @@ export function Gallery() {
         )}
       </AnimatePresence>
     </section>
+  )
+}
+
+function ManagedPhotos() {
+  const photos = useQuery(api.content.listPublicPhotos, {}) as Array<{
+    _id: string
+    url: string | null
+    title: string
+    alt: string
+  }> | undefined
+
+  if (!photos?.length) return null
+
+  return (
+    <div className="mt-12 border-t border-[var(--cream-muted)] pt-10">
+      <p className="kicker">Recently added</p>
+      <h3 className="text-2xl font-extrabold text-[var(--navy)]">Fresh moments from campus.</h3>
+      <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+        {photos.slice(0, 8).map((photo) => (
+          <figure key={photo._id} className="overflow-hidden rounded-[12px] bg-white shadow-[var(--shadow)]">
+            <img src={photo.url ?? ''} alt={photo.alt} className="aspect-square w-full object-cover" loading="lazy" />
+            <figcaption className="p-3 text-xs font-bold text-[var(--navy)]">{photo.title}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
   )
 }

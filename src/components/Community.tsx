@@ -2,6 +2,8 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { school } from '../lib/school'
 import { fadeUp, staggerFast, viewportOnce } from '../lib/motion'
 import { IconArrow } from './icons'
+import { useQuery } from 'convex/react'
+import { api } from '../lib/convexApi'
 
 const posts = [
   {
@@ -46,6 +48,8 @@ export function Community() {
           </p>
         </motion.div>
 
+        {import.meta.env.VITE_CONVEX_URL ? <LiveAnnouncements /> : null}
+
         <motion.div
           className="mt-12 grid gap-6 md:grid-cols-3"
           initial={reduceMotion ? false : 'hidden'}
@@ -84,5 +88,37 @@ export function Community() {
         </motion.div>
       </div>
     </section>
+  )
+}
+
+function LiveAnnouncements() {
+  const announcements = useQuery(api.content.listPublicAnnouncements, {}) as Array<{
+    _id: string
+    title: string
+    body: string
+    category: string
+  }> | undefined
+
+  if (!announcements?.length) return null
+
+  return (
+    <div className="mt-10 rounded-[14px] border border-[var(--cream-muted)] bg-white p-6 shadow-[var(--shadow)] sm:p-8">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="kicker">Latest from school</p>
+          <h3 className="text-2xl font-extrabold text-[var(--navy)]">Announcements for our families.</h3>
+        </div>
+        <span className="text-xs font-semibold text-[var(--muted)]">Updated by the school office</span>
+      </div>
+      <div className="mt-6 grid gap-4 md:grid-cols-2">
+        {announcements.slice(0, 4).map((announcement) => (
+          <article key={announcement._id} className="border-l-2 border-[var(--orange)] pl-4">
+            <p className="text-xs font-bold tracking-wide text-[var(--orange)] uppercase">{announcement.category}</p>
+            <h4 className="mt-1 font-extrabold text-[var(--navy)]">{announcement.title}</h4>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{announcement.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
   )
 }

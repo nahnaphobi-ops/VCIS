@@ -1,11 +1,13 @@
+import { Link } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
-import { school, whatsappEnquireUrl } from '../lib/school'
+import { school as staticSchool, whatsappEnquireUrl } from '../lib/school'
+import { useSchool } from '../lib/useSchool'
 import { easeOutExpo, fadeUp, staggerContainer } from '../lib/motion'
-import { scrollToSection } from '../lib/scrollToSection'
 import { IconArrow } from './icons'
 
 export function Hero() {
   const reduceMotion = useReducedMotion()
+  const { school } = useSchool()
 
   return (
     <section id="top" className="relative isolate overflow-hidden bg-[var(--navy)] text-white">
@@ -18,7 +20,7 @@ export function Hero() {
           animate={{ scale: 1 }}
           transition={{ duration: 10, ease: easeOutExpo }}
         />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(11,47,54,0.94)_0%,rgba(11,47,54,0.82)_48%,rgba(11,47,54,0.55)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(12,27,53,0.94)_0%,rgba(12,27,53,0.82)_48%,rgba(12,27,53,0.55)_100%)]" />
       </div>
 
       <div className="relative mx-auto grid min-h-[34rem] max-w-6xl items-center gap-10 px-4 py-16 sm:min-h-[38rem] sm:px-5 md:px-8 md:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:min-h-[42rem]">
@@ -35,7 +37,7 @@ export function Hero() {
             className="text-[clamp(2.1rem,6vw,3.6rem)] font-extrabold leading-[1.08] tracking-tight"
             variants={reduceMotion ? undefined : fadeUp}
           >
-            Welcome To Victoria Crest International School
+            Welcome To {school.name}
           </motion.h1>
           <motion.p
             className="mt-5 max-w-md text-base leading-relaxed text-white/85 md:text-lg"
@@ -45,19 +47,12 @@ export function Hero() {
             community, and a global outlook.
           </motion.p>
           <motion.div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center" variants={reduceMotion ? undefined : fadeUp}>
-            <a
-              href="#programmes"
-              className="btn btn-primary"
-              onClick={(event) => {
-                event.preventDefault()
-                scrollToSection('#programmes', { behavior: reduceMotion ? 'auto' : 'smooth' })
-              }}
-            >
+            <Link to="/programmes" className="btn btn-primary">
               Our Programmes
               <IconArrow />
-            </a>
+            </Link>
             <a
-              href={whatsappEnquireUrl(`Hello ${school.shortName}, I would like to enquire about admissions.`)}
+              href={whatsappEnquireUrl(`Hello ${staticSchool.shortName}, I would like to enquire about admissions.`)}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-white"

@@ -95,7 +95,7 @@ export function Chatbot() {
             ))}
             {loading && <div className="max-w-[88%] rounded-lg bg-white/10 px-3 py-2 text-sm text-white/60">Thinking…</div>}
             {error && (
-              <p className="text-xs text-[#f4b083]" role="alert">
+              <p className="text-xs text-[#e9d8ff]" role="alert">
                 {error} Try WhatsApp or call {school.phoneDisplay}.
               </p>
             )}
@@ -126,7 +126,7 @@ export function Chatbot() {
               href={whatsappEnquireUrl(`Hello ${school.shortName}, I would like to enquire about admissions.`)}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-2 block text-center text-xs text-[#f4b083] transition hover:text-white"
+              className="mt-2 block text-center text-xs text-[#e9d8ff] transition hover:text-white"
             >
               Prefer WhatsApp? Message the school
             </a>

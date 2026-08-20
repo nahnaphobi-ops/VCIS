@@ -23,6 +23,13 @@ const steps = [
   },
 ]
 
+const admissionNotes = [
+  ['Placement conversation', 'We learn about your child, answer questions, and recommend the most suitable entry point.'],
+  ['School visit', 'See the campus, meet the team, and understand the rhythm of a normal school day.'],
+  ['Documents and assessment', 'The admissions team will confirm the documents and any age-appropriate assessment needed.'],
+  ['Welcome and orientation', 'Once a place is confirmed, we share the next steps for a smooth start.'],
+]
+
 export function Admissions() {
   const reduceMotion = useReducedMotion()
 
@@ -79,6 +86,28 @@ export function Admissions() {
           <a href={`tel:${school.phoneTel}`} className="btn btn-outline w-full sm:w-auto">
             Call {school.phoneDisplay}
           </a>
+        </div>
+
+        <div className="mt-16 grid gap-10 border-t border-[var(--cream-muted)] pt-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <div>
+            <p className="kicker">What To Expect</p>
+            <h3 className="text-2xl font-extrabold tracking-tight text-[var(--navy)] md:text-3xl">A thoughtful start matters.</h3>
+            <p className="mt-4 text-sm leading-relaxed text-[var(--muted)] md:text-base">
+              We keep the process personal and clear. Contact us early so the team can explain current availability,
+              fees, term dates, and the documents relevant to your child.
+            </p>
+          </div>
+          <ol className="grid gap-4 sm:grid-cols-2">
+            {admissionNotes.map(([title, body], index) => (
+              <li key={title} className="flex gap-4 rounded-[12px] bg-white p-5 shadow-[var(--shadow)]">
+                <span className="text-sm font-black text-[var(--orange)]">0{index + 1}</span>
+                <div>
+                  <h4 className="font-extrabold text-[var(--navy)]">{title}</h4>
+                  <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{body}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
     </section>
