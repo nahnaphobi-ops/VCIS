@@ -1,30 +1,11 @@
+import { Link } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import { school } from '../lib/school'
+import { communityPostPath, communityPosts } from '../lib/communityPosts'
 import { fadeUp, staggerFast, viewportOnce } from '../lib/motion'
 import { IconArrow } from './icons'
 import { useQuery } from 'convex/react'
 import { api } from '../lib/convexApi'
-
-const posts = [
-  {
-    title: 'Culture day celebrations on campus',
-    date: 'School life',
-    image: '/gallery/culture-day-girls-1.png',
-    position: 'center 25%',
-  },
-  {
-    title: 'Friends, play, and lunch outdoors',
-    date: 'Campus moments',
-    image: '/gallery/lunch-boys.png',
-    position: 'center 40%',
-  },
-  {
-    title: 'A growing family in Kumasi',
-    date: `${school.facebookFollowers} followers`,
-    image: '/gallery/group-steps.png',
-    position: 'center 30%',
-  },
-]
 
 export function Community() {
   const reduceMotion = useReducedMotion()
@@ -42,7 +23,7 @@ export function Community() {
           <p className="kicker">Community</p>
           <h2 className="heading-display text-[var(--navy)]">Read all our school life updates.</h2>
           <p className="mt-4 text-base leading-relaxed text-[var(--muted)] md:text-lg">
-            Follow celebrations, campus moments, and family news on Facebook — where{' '}
+            Follow celebrations, campus moments, and family news — where{' '}
             <span className="font-semibold text-[var(--navy)]">{school.facebookFollowers} followers</span>{' '}
             stay connected with Victoria Crest.
           </p>
@@ -57,9 +38,9 @@ export function Community() {
           viewport={viewportOnce}
           variants={reduceMotion ? undefined : staggerFast}
         >
-          {posts.map((post) => (
+          {communityPosts.map((post) => (
             <motion.article
-              key={post.title}
+              key={post.slug}
               className="card overflow-hidden"
               variants={reduceMotion ? undefined : fadeUp}
             >
@@ -72,16 +53,15 @@ export function Community() {
                 />
               </div>
               <div className="p-6">
-                <p className="text-xs font-bold tracking-[0.16em] text-[var(--orange)] uppercase">{post.date}</p>
+                <p className="text-xs font-bold tracking-[0.16em] text-[var(--orange)] uppercase">{post.kicker}</p>
                 <h3 className="mt-2 text-lg font-extrabold text-[var(--navy)]">{post.title}</h3>
-                <a
-                  href={school.facebookUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-[var(--navy)] hover:text-[var(--orange)]"
+                <p className="mt-3 text-sm leading-relaxed text-[var(--muted)]">{post.excerpt}</p>
+                <Link
+                  to={communityPostPath(post.slug)}
+                  className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-[var(--navy)] no-underline hover:text-[var(--orange)]"
                 >
                   Read More <IconArrow className="h-3.5 w-3.5" />
-                </a>
+                </Link>
               </div>
             </motion.article>
           ))}
@@ -92,12 +72,14 @@ export function Community() {
 }
 
 function LiveAnnouncements() {
-  const announcements = useQuery(api.content.listPublicAnnouncements, {}) as Array<{
-    _id: string
-    title: string
-    body: string
-    category: string
-  }> | undefined
+  const announcements = useQuery(api.content.listPublicAnnouncements, {}) as
+    | Array<{
+        _id: string
+        title: string
+        body: string
+        category: string
+      }>
+    | undefined
 
   if (!announcements?.length) return null
 
@@ -113,7 +95,9 @@ function LiveAnnouncements() {
       <div className="mt-6 grid gap-4 md:grid-cols-2">
         {announcements.slice(0, 4).map((announcement) => (
           <article key={announcement._id} className="border-l-2 border-[var(--orange)] pl-4">
-            <p className="text-xs font-bold tracking-wide text-[var(--orange)] uppercase">{announcement.category}</p>
+            <p className="text-xs font-bold tracking-wide text-[var(--orange)] uppercase">
+              {announcement.category}
+            </p>
             <h4 className="mt-1 font-extrabold text-[var(--navy)]">{announcement.title}</h4>
             <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{announcement.body}</p>
           </article>
