@@ -8,7 +8,7 @@ export const school = {
   phoneTel: '+233599772383',
   phoneSecondaryDisplay: '024 201 9659',
   phoneSecondaryTel: '+233242019659',
-  whatsapp: '233599772383',
+  whatsapp: '233242019659',
   website: 'vcis.edu.gh',
   facebookUrl: 'https://www.facebook.com/newdestinschool',
   facebookFollowers: '9.3K',
