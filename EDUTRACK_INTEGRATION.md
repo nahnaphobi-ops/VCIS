@@ -16,7 +16,24 @@
    ```
 3. Optional secrets / env for the function:
    - `PUBLIC_WEBSITE_SCHOOL_IDS=victoria-crest-international-school`
-   - `PUBLIC_WEBSITE_ORIGINS=http://localhost:5173,https://vcis.edu.gh,https://www.vcis.edu.gh`
+   - `PUBLIC_WEBSITE_ORIGINS=http://localhost:5173,https://vcis-alpha.vercel.app,https://vcis.edu.gh,https://www.vcis.edu.gh`
+
+## Vercel (vcis-alpha.vercel.app)
+
+Vite bakes `VITE_*` values in at **build** time. Add these on the Vercel project, then **Redeploy**:
+
+- `VITE_EDUTRACK_FUNCTIONS_URL=https://egdjzarvzzxafjdcemyy.supabase.co/functions/v1`
+- `VITE_EDUTRACK_ANON_KEY=<anon key>`
+- `VITE_EDUTRACK_SCHOOL_ID=victoria-crest-international-school`
+
+Without them, production skips EduTrack and only shows static fallbacks (localhost works because of `.env.local`).
+
+After changing EduTrack CORS defaults, redeploy:
+
+```bash
+npx supabase functions deploy public-school-profile --project-ref egdjzarvzzxafjdcemyy
+npx supabase functions deploy public-admissions-apply --project-ref egdjzarvzzxafjdcemyy
+```
 
 ## Publish fees & notices in EduTrack
 Until staff mark rows public, fees/notices arrays stay empty (safe default).
