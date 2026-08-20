@@ -12,9 +12,9 @@ const usefulLinks = [
 ]
 
 const services = [
-  { to: '/programmes/early-years', label: 'Early Years' },
-  { to: '/programmes/primary', label: 'Primary' },
-  { to: '/programmes/junior-high', label: 'Junior High' },
+  { to: '/programmes', label: 'Early Years' },
+  { to: '/programmes', label: 'Primary' },
+  { to: '/programmes', label: 'Junior High' },
 ]
 
 export function Footer() {

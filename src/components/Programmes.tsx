@@ -1,8 +1,36 @@
 import { Link } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
-import { programmes, programmePath } from '../lib/programmes'
+import { school, whatsappEnquireUrl } from '../lib/school'
 import { fadeUp, staggerFast, viewportLoose, viewportOnce } from '../lib/motion'
 import { IconArrow } from './icons'
+
+const programmes = [
+  {
+    title: 'Early Years',
+    age: 'Ages 2–5',
+    summary: 'A warm start to school life — play, language, and the habits that make learning feel safe.',
+    focus: 'Language, early numeracy, discovery, creative play, and independence.',
+    images: [
+      { src: '/gallery/early-years-1.png', position: 'center 20%' },
+      { src: '/gallery/early-years-2.png', position: 'center 40%' },
+      { src: '/gallery/early-years-3.png', position: 'center 30%' },
+    ],
+  },
+  {
+    title: 'Primary',
+    age: 'Ages 6–11',
+    summary: 'Strong core subjects with character formation — learners who can think, write, and work well with others.',
+    focus: 'Literacy, numeracy, science, technology, creative expression, and collaboration.',
+    images: [{ src: '/gallery/play-swings.png', position: 'center 40%' }],
+  },
+  {
+    title: 'Junior High',
+    age: 'Ages 12–14',
+    summary: 'Deeper academic challenge and guidance as students prepare for the next stage of their education.',
+    focus: 'Subject mastery, critical thinking, leadership, examination readiness, and life skills.',
+    images: [{ src: '/gallery/students-picnic-girls.png', position: 'center 30%' }],
+  },
+]
 
 export function Programmes() {
   const reduceMotion = useReducedMotion()
@@ -34,7 +62,7 @@ export function Programmes() {
         >
           {programmes.map((programme) => (
             <motion.article
-              key={programme.slug}
+              key={programme.title}
               className="card overflow-hidden transition duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-hover)]"
               variants={reduceMotion ? undefined : fadeUp}
             >
@@ -79,15 +107,18 @@ export function Programmes() {
                 </div>
                 <p className="mt-3 text-sm leading-relaxed text-[var(--muted)]">{programme.summary}</p>
                 <p className="mt-4 border-t border-[var(--cream-muted)] pt-4 text-xs leading-relaxed text-[var(--muted)]">
-                  <span className="font-bold text-[var(--navy)]">Learning focus: </span>
-                  {programme.focus}
+                  <span className="font-bold text-[var(--navy)]">Learning focus: </span>{programme.focus}
                 </p>
-                <Link
-                  to={programmePath(programme.slug)}
-                  className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[var(--orange)] no-underline"
+                <a
+                  href={whatsappEnquireUrl(
+                    `Hello ${school.shortName}, I would like information about the ${programme.title} programme.`,
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[var(--orange)]"
                 >
                   Read More <IconArrow className="h-3.5 w-3.5" />
-                </Link>
+                </a>
               </div>
             </motion.article>
           ))}
@@ -95,15 +126,11 @@ export function Programmes() {
 
         <div className="mt-12 grid gap-4 rounded-[12px] bg-[var(--navy)] p-6 text-white sm:grid-cols-3 sm:p-8">
           <div className="sm:col-span-2">
-            <p className="text-xs font-bold tracking-[0.18em] text-[var(--orange-bright)] uppercase">
-              One connected journey
-            </p>
-            <h3 className="mt-2 text-2xl font-extrabold tracking-tight">
-              A consistent standard from first steps to the next stage.
-            </h3>
+            <p className="text-xs font-bold tracking-[0.18em] text-[var(--orange-bright)] uppercase">One connected journey</p>
+            <h3 className="mt-2 text-2xl font-extrabold tracking-tight">A consistent standard from first steps to the next stage.</h3>
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/75">
-              Each programme is designed to build on the one before it, with regular communication between school and
-              home so learners can transition with confidence.
+              Each programme is designed to build on the one before it, with regular communication between school and home
+              so learners can transition with confidence.
             </p>
           </div>
           <Link to="/contact" className="btn btn-primary self-end sm:justify-self-end">
