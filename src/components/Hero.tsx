@@ -47,18 +47,18 @@ export function Hero() {
             community, and a global outlook.
           </motion.p>
           <motion.div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center" variants={reduceMotion ? undefined : fadeUp}>
-            <Link to="/programmes" className="btn btn-primary">
-              Our Programmes
-              <IconArrow />
-            </Link>
             <a
               href={whatsappEnquireUrl(`Hello ${staticSchool.shortName}, I would like to enquire about admissions.`)}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn btn-white"
+              className="btn btn-primary"
             >
               Enquire Now
             </a>
+            <Link to="/programmes" className="btn btn-white">
+              Our Programmes
+              <IconArrow />
+            </Link>
           </motion.div>
         </motion.div>
 

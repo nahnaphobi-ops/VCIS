@@ -5,9 +5,10 @@
   --navy: #0c1b35;
   --navy-deep: #06101f;
   --navy-soft: #163354;
-  --orange: #fc6800;
-  --orange-bright: #ff7e14;
-  --orange-deep: #d95500;
+  /* Enquire Now button orange — one orange everywhere */
+  --orange: #f86800;
+  --orange-bright: #f86800;
+  --orange-deep: #d45500;
   --teal: #d6e2ef;
   --teal-bright: #9bb6d0;
   --cream: #f6f3ef;
@@ -234,5 +235,5 @@ a[href],
 }
 
 .input-field:focus {
-  box-shadow: 0 0 0 3px rgba(252, 104, 0, 0.35);
+  box-shadow: 0 0 0 3px rgba(248, 104, 0, 0.35);
 }

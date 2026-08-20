@@ -94,7 +94,7 @@ export function downloadAdmissionsFormPdf({ requirements, fees = [], fields = {}
   )
   y += 8
 
-  doc.setDrawColor(252, 104, 0)
+  doc.setDrawColor(248, 104, 0)
   doc.setLineWidth(0.6)
   doc.line(margin, y, pageWidth - margin, y)
   y += 10
@@ -199,7 +199,7 @@ export function downloadAdmissionsFormPdf({ requirements, fees = [], fields = {}
       doc.setTextColor(40, 48, 60)
       doc.text(fee.name, margin, y)
       doc.setFont('helvetica', 'bold')
-      doc.setTextColor(252, 104, 0)
+      doc.setTextColor(248, 104, 0)
       doc.text(`GHS ${Number(fee.default_amount).toLocaleString()}`, pageWidth - margin, y, {
         align: 'right',
       })
@@ -209,7 +209,7 @@ export function downloadAdmissionsFormPdf({ requirements, fees = [], fields = {}
   }
 
   ensureSpace(36)
-  doc.setDrawColor(252, 104, 0)
+  doc.setDrawColor(248, 104, 0)
   doc.setLineWidth(0.5)
   doc.line(margin, y, pageWidth - margin, y)
   y += 8

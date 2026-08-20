@@ -9,7 +9,7 @@ const pillars = [
       <svg viewBox="0 0 40 40" className="h-10 w-10" aria-hidden>
         <rect x="6" y="8" width="22" height="24" rx="2" fill="#06101f" />
         <path d="M10 14h14M10 19h12M10 24h10" stroke="#fff" strokeWidth="1.5" />
-        <path d="M28 12 L32 16 L28 20" fill="#fc6800" />
+        <path d="M28 12 L32 16 L28 20" fill="#f86800" />
       </svg>
     ),
   },
@@ -18,7 +18,7 @@ const pillars = [
     body: 'Integrity is not a slogan here — it is how students treat work, peers, and responsibility.',
     icon: (
       <svg viewBox="0 0 40 40" className="h-10 w-10" aria-hidden>
-        <path d="M8 18 L20 12 L32 18 L20 24 Z" fill="#fc6800" />
+        <path d="M8 18 L20 12 L32 18 L20 24 Z" fill="#f86800" />
         <path
           d="M14 21 V28 C14 30 20 33 20 33 S26 30 26 28 V21"
           stroke="#fff"
@@ -34,7 +34,7 @@ const pillars = [
     icon: (
       <svg viewBox="0 0 40 40" className="h-10 w-10" aria-hidden>
         <circle cx="20" cy="18" r="11" fill="none" stroke="#fff" strokeWidth="2" />
-        <ellipse cx="20" cy="18" rx="5" ry="11" fill="none" stroke="#fc6800" strokeWidth="1.5" />
+        <ellipse cx="20" cy="18" rx="5" ry="11" fill="none" stroke="#f86800" strokeWidth="1.5" />
         <path d="M9 18h22" stroke="#fff" strokeWidth="1.5" />
       </svg>
     ),
@@ -44,7 +44,7 @@ const pillars = [
     body: 'We look for steady progress — academic, social, and personal — season after season.',
     icon: (
       <svg viewBox="0 0 40 40" className="h-10 w-10" aria-hidden>
-        <circle cx="20" cy="14" r="8" fill="#fc6800" />
+        <circle cx="20" cy="14" r="8" fill="#f86800" />
         <path d="M20 18 V32" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" />
         <path d="M14 32h12" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
       </svg>
@@ -92,7 +92,7 @@ export function Academics() {
               whileHover={
                 reduceMotion
                   ? undefined
-                  : { y: -6, backgroundColor: 'rgba(255,255,255,0.1)', borderColor: 'rgba(252,104,0,0.45)' }
+                  : { y: -6, backgroundColor: 'rgba(255,255,255,0.1)', borderColor: 'rgba(248,104,0,0.45)' }
               }
               transition={{ type: 'spring', stiffness: 360, damping: 26 }}
             >
