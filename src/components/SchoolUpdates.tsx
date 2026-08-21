@@ -29,6 +29,14 @@ export function SchoolUpdates() {
 
   if (!hasCalendar && !hasNotices && !hasFees) return null
 
+  const panelCount = [hasCalendar, hasNotices, hasFees].filter(Boolean).length
+  const panelsClass =
+    panelCount === 1
+      ? 'mt-12 mx-auto grid w-full max-w-md gap-6'
+      : panelCount === 2
+        ? 'mt-12 grid gap-6 md:grid-cols-2'
+        : 'mt-12 grid gap-6 lg:grid-cols-3'
+
   return (
     <section className="section-pad bg-white">
       <div className="mx-auto max-w-6xl">
@@ -47,7 +55,7 @@ export function SchoolUpdates() {
           </p>
         </motion.div>
 
-        <div className="mt-12 grid gap-6 lg:grid-cols-3">
+        <div className={panelsClass}>
           {hasCalendar ? (
             <article className="rounded-[12px] bg-[var(--cream)] p-6">
               <p className="text-xs font-bold tracking-[0.18em] text-[var(--orange)] uppercase">
