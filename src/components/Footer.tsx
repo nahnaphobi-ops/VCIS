@@ -94,7 +94,7 @@ export function Footer() {
               </div>
             </div>
 
-            <div>
+            <div className="lg:pl-8">
               <h3 className="text-sm font-extrabold tracking-[0.16em] uppercase">Useful links</h3>
               <ul className="mt-4 space-y-2 text-sm text-white/75">
                 {usefulLinks.map((link) => (
