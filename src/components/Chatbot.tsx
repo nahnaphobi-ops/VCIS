@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
+import { cleanChatAnswer } from '../lib/cleanChatAnswer'
 import { school, whatsappEnquireUrl } from '../lib/school'
 
 function chatHttpBase() {
@@ -34,27 +35,57 @@ const suggestions = [
   'When does the next term begin?',
 ]
 
-/** Render light markdown from the assistant: paragraphs, line breaks, and **bold**. */
+/** Render light markdown from the assistant: paragraphs, bullets, and **bold**. */
 function ChatRichText({ content }: { content: string }) {
-  const paragraphs = content
+  const normalized = content
     .replace(/\r\n/g, '\n')
+    // Keep numbered steps and bullets as separate blocks even with single newlines.
+    .replace(/\n(?=(?:\*\*)?\d+\.\s)/g, '\n\n')
+    .replace(/\n(?=-\s+)/g, '\n')
+
+  const paragraphs = normalized
     .split(/\n{2,}/)
     .map((part) => part.trim())
     .filter(Boolean)
 
   return (
     <div className="space-y-2">
-      {paragraphs.map((paragraph, paragraphIndex) => (
-        <p key={paragraphIndex} className="whitespace-pre-wrap">
-          {paragraph.split(/(\*\*[^*]+\*\*)/g).map((chunk, chunkIndex) => {
-            if (chunk.startsWith('**') && chunk.endsWith('**') && chunk.length > 4) {
-              return <strong key={chunkIndex}>{chunk.slice(2, -2)}</strong>
-            }
-            return <span key={chunkIndex}>{chunk}</span>
-          })}
-        </p>
-      ))}
+      {paragraphs.map((paragraph, paragraphIndex) => {
+        const lines = paragraph.split('\n')
+        const isBulletBlock = lines.every((line) => /^\s*-\s+/.test(line))
+
+        if (isBulletBlock) {
+          return (
+            <ul key={paragraphIndex} className="list-disc space-y-1 pl-4">
+              {lines.map((line, lineIndex) => (
+                <li key={lineIndex}>
+                  <InlineMarkdown text={line.replace(/^\s*-\s+/, '')} />
+                </li>
+              ))}
+            </ul>
+          )
+        }
+
+        return (
+          <p key={paragraphIndex} className="whitespace-pre-wrap">
+            <InlineMarkdown text={paragraph} />
+          </p>
+        )
+      })}
     </div>
+  )
+}
+
+function InlineMarkdown({ text }: { text: string }) {
+  return (
+    <>
+      {text.split(/(\*\*[^*]+\*\*)/g).map((chunk, chunkIndex) => {
+        if (chunk.startsWith('**') && chunk.endsWith('**') && chunk.length > 4) {
+          return <strong key={chunkIndex}>{chunk.slice(2, -2)}</strong>
+        }
+        return <span key={chunkIndex}>{chunk}</span>
+      })}
+    </>
   )
 }
 
@@ -93,7 +124,10 @@ export function Chatbot() {
       })
       const data = (await response.json()) as { answer?: string; error?: string }
       if (!response.ok || !data.answer) throw new Error(data.error || 'Unable to get a response.')
-      setMessages((current) => [...current, { role: 'assistant', content: data.answer! }])
+      setMessages((current) => [
+        ...current,
+        { role: 'assistant', content: cleanChatAnswer(data.answer!) },
+      ])
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : 'Please try again.')
     } finally {

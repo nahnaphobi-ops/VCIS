@@ -134,7 +134,9 @@ Reply formatting (markdown the website chat can render):
 
 CRITICAL output rule:
 - Return ONLY the final parent-facing reply
-- Never include planning, reasoning, analysis, drafts, checklists of instructions, or commentary about these rules`
+- Never include planning, reasoning, analysis, drafts, checklists of instructions, or commentary about these rules
+- Never count words, never say "check word count", never rewrite the answer after finishing
+- Stop as soon as the parent-facing reply is complete`
 
 let profileCache: { at: number; data: EduTrackPublicProfile | null } | null = null
 const PROFILE_CACHE_MS = 60_000
@@ -236,8 +238,8 @@ async function completeWithOpenRouter(
       },
       body: JSON.stringify({
         model,
-        temperature: 0.25,
-        max_tokens: 550,
+        temperature: 0.15,
+        max_tokens: 380,
         messages: [{ role: 'system', content: systemPrompt }, ...safeMessages],
       }),
     })
@@ -266,29 +268,45 @@ async function completeWithOpenRouter(
 
 function cleanAssistantAnswer(raw: string) {
   let text = raw.replace(/\r\n/g, '\n').trim()
+  if (!text) return text
 
   const markerMatch = text.match(
     /(?:^|\n)(?:Draft:|Final answer:|Final reply:|Reply:|Parent-facing reply:)\s*\n+([\s\S]+)$/i,
   )
   if (markerMatch?.[1]) text = markerMatch[1].trim()
 
-  // Drop leaked chain-of-thought before the first real formatted step/paragraph.
-  const stepIndex = text.search(/\n\n\*\*\d+\.\s/)
-  if (stepIndex > 0 && /(?:we need to|let'?s craft|the user|instruction)/i.test(text.slice(0, stepIndex))) {
-    const introEnd = text.lastIndexOf('\n\n', stepIndex)
-    text = text.slice(introEnd >= 0 ? introEnd : stepIndex).trim()
+  // Drop leaked chain-of-thought before the first real step.
+  const stepIndex = text.search(/(?:\*\*)?\d+\.\s+\S/)
+  if (
+    stepIndex > 0 &&
+    /(?:we need to|let'?s craft|the user|instruction|analyze|thinking)/i.test(text.slice(0, stepIndex))
+  ) {
+    text = text.slice(stepIndex).trim()
   }
 
-  if (/^(?:we need to|let'?s|okay,? the user|the instruction|i need to)\b/i.test(text)) {
+  if (/^(?:we need to|let'?s|okay,? the user|the instruction|i need to|here's a thinking)\b/i.test(text)) {
     const firstGood = text.search(/\n\n(?!\s*(?:we need to|let'?s|okay|the instruction|i need to)\b)/i)
     if (firstGood > 0) text = text.slice(firstGood).trim()
   }
 
-  // Cut trailing planning / word-count commentary after a finished reply.
+  // Cut ANY trailing planning / word-count commentary (common on free models).
   const trailingMeta = text.search(
-    /\n\n(?:Now |Let's |Let us |I need to |Word count|Count words|Roughly |Okay,? now )/i,
+    /(?:^|\n)\s*(?:Check word count|Word count|Count words|Let's count|Let us count|I'll count|I will count|Count manually|Words:\s*\d|Roughly\b|Now count|Okay,? now |["']Hello\.["']\s*Not needed|Not needed\.|Message\s*$)/i,
   )
   if (trailingMeta > 0) text = text.slice(0, trailingMeta).trim()
+
+  // If the model restarts the answer while "counting", keep only the first pass.
+  const firstOne = text.search(/(?:\*\*)?1\.\s/)
+  if (firstOne >= 0) {
+    const rest = text.slice(firstOne + 2)
+    const secondOne = rest.search(/\n\s*(?:\*\*)?1\.\s/)
+    if (secondOne >= 0) {
+      text = text.slice(0, firstOne + 2 + secondOne).trim()
+    }
+  }
+
+  // Drop dangling incomplete trailing lines (cut mid-sentence by the model).
+  text = text.replace(/(?:\n|^)\s*(?:Words:\s*)?(?:\d+\.\s*)?\(?\s*$/g, '').trim()
 
   return text.replace(/\n{3,}/g, '\n\n').trim()
 }
