@@ -33,17 +33,25 @@ applications sync through EduTrack edge functions. See `EDUTRACK_INTEGRATION.md`
 
 ## AI Chatbot
 
-The floating admissions assistant uses DeepSeek through the Convex HTTP action
-at `/chat`. Add `DEEPSEEK_API_KEY` to the Convex deployment environment:
+The floating assistant uses **OpenRouter free models** through the Convex HTTP
+action at `/chat` (primary: `google/gemma-4-26b-a4b-it:free`, with free
+Nemotron backups). Each reply is grounded in the EduTrack public school profile
+(term dates, class levels, enrolment requirements, published fees/notices/events)
+plus static school facts. It guides admissions and points families to
+`/admissions` or WhatsApp/phone.
+
+Set the key on the Convex deployment (never in frontend code or git):
 
 ```bash
-npx convex env set DEEPSEEK_API_KEY your_key_here
-npx convex deploy
+npx convex env set OPENROUTER_API_KEY your_key_here --deployment loyal-woodpecker-470
+npx convex dev --once
 ```
 
-The frontend uses the configured deployment URL by default. To override it,
-set `VITE_CONVEX_URL` in a Vercel environment variable. Do not add the
-DeepSeek key to frontend code or commit it to the repository.
+Optional Convex overrides: `OPENROUTER_MODEL`, `EDUTRACK_FUNCTIONS_URL`,
+`EDUTRACK_ANON_KEY`, `EDUTRACK_SCHOOL_ID`.
+
+The frontend prefers `VITE_CONVEX_SITE_URL` for HTTP actions (falls back to
+`VITE_CONVEX_URL`).
 
 ## Admin Content Studio
 

@@ -1,7 +1,21 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { Link } from 'react-router-dom'
 import { school, whatsappEnquireUrl } from '../lib/school'
 
-const chatEndpoint = `${import.meta.env.VITE_CONVEX_URL || 'https://loyal-woodpecker-470.eu-west-1.convex.cloud'}/chat`
+function chatHttpBase() {
+  const site = import.meta.env.VITE_CONVEX_SITE_URL as string | undefined
+  if (site) return site.replace(/\/$/, '')
+
+  const cloud = import.meta.env.VITE_CONVEX_URL as string | undefined
+  if (cloud) {
+    // HTTP actions are served on *.convex.site, not *.convex.cloud
+    return cloud.replace(/\/$/, '').replace(/\.convex\.cloud\b/, '.convex.site')
+  }
+
+  return 'https://loyal-woodpecker-470.eu-west-1.convex.site'
+}
+
+const chatEndpoint = `${chatHttpBase()}/chat`
 
 type Message = {
   role: 'user' | 'assistant'
@@ -10,8 +24,15 @@ type Message = {
 
 const welcomeMessage: Message = {
   role: 'assistant',
-  content: `Hello. I’m the Victoria Crest admissions assistant. How can I help you learn more about the school?`,
+  content: `Hello. I’m the Victoria Crest assistant. I can help with admissions, programmes, term dates, enrolment documents, and other school information from EduTrack. How can I help your family today?`,
 }
+
+const suggestions = [
+  'How do admissions work?',
+  'What documents do we need?',
+  'Which class for a 7-year-old?',
+  'When does the next term begin?',
+]
 
 export function Chatbot() {
   const [open, setOpen] = useState(false)
@@ -30,12 +51,11 @@ export function Chatbot() {
     if (open) endRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, open])
 
-  async function sendMessage(event: FormEvent) {
-    event.preventDefault()
-    const content = input.trim()
-    if (!content || loading) return
+  async function sendContent(content: string) {
+    const trimmed = content.trim()
+    if (!trimmed || loading) return
 
-    const nextMessages = [...messages, { role: 'user' as const, content }]
+    const nextMessages = [...messages, { role: 'user' as const, content: trimmed }]
     setMessages(nextMessages)
     setInput('')
     setError('')
@@ -57,18 +77,23 @@ export function Chatbot() {
     }
   }
 
+  async function sendMessage(event: FormEvent) {
+    event.preventDefault()
+    await sendContent(input)
+  }
+
   return (
     <div className="fixed right-4 bottom-4 z-50 sm:right-6 sm:bottom-6">
       {open && (
         <section
           id="school-chat"
-          className="mb-3 flex h-[min(30rem,calc(100svh-7rem))] w-[min(20rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-[12px] border border-white/15 bg-[var(--navy)] text-white shadow-[0_18px_60px_rgba(0,0,0,0.35)] sm:w-80"
+          className="mb-3 flex h-[min(32rem,calc(100svh-7rem))] w-[min(21rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-[12px] border border-white/15 bg-[var(--navy)] text-white shadow-[0_18px_60px_rgba(0,0,0,0.35)] sm:w-[22rem]"
           aria-label="Victoria Crest chat assistant"
         >
           <header className="flex items-center justify-between border-b border-white/10 px-4 py-3">
             <div>
               <p className="text-sm font-semibold">Victoria Crest Assistant</p>
-              <p className="mt-0.5 text-[11px] text-white/55">Admissions and school information</p>
+              <p className="mt-0.5 text-[11px] text-white/55">Admissions · programmes · EduTrack info</p>
             </div>
             <button
               type="button"
@@ -93,6 +118,20 @@ export function Chatbot() {
                 {message.content}
               </div>
             ))}
+            {messages.length === 1 && !loading && (
+              <div className="flex flex-wrap gap-2">
+                {suggestions.map((suggestion) => (
+                  <button
+                    key={suggestion}
+                    type="button"
+                    onClick={() => void sendContent(suggestion)}
+                    className="rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-left text-[11px] text-white/80 transition hover:border-white/40 hover:bg-white/10 hover:text-white"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            )}
             {loading && <div className="max-w-[88%] rounded-lg bg-white/10 px-3 py-2 text-sm text-white/60">Thinking…</div>}
             {error && (
               <p className="text-xs text-[#e9d8ff]" role="alert">
@@ -110,7 +149,7 @@ export function Chatbot() {
                 id="chat-message"
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
-                placeholder="Ask about the school..."
+                placeholder="Ask about admissions, fees, terms…"
                 maxLength={1000}
                 className="min-w-0 flex-1 rounded-[10px] border border-white/15 bg-white/10 px-3 py-2 text-sm text-white outline-none placeholder:text-white/40 focus:border-[var(--orange)]"
               />
@@ -122,14 +161,19 @@ export function Chatbot() {
                 Send
               </button>
             </form>
-            <a
-              href={whatsappEnquireUrl(`Hello ${school.shortName}, I would like to enquire about admissions.`)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-2 block text-center text-xs text-[#e9d8ff] transition hover:text-white"
-            >
-              Prefer WhatsApp? Message the school
-            </a>
+            <div className="mt-2 flex items-center justify-between gap-2 text-[11px]">
+              <Link to="/admissions" className="text-[#e9d8ff] transition hover:text-white">
+                Apply online
+              </Link>
+              <a
+                href={whatsappEnquireUrl(`Hello ${school.shortName}, I would like to enquire about admissions.`)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#e9d8ff] transition hover:text-white"
+              >
+                WhatsApp the school
+              </a>
+            </div>
           </div>
         </section>
       )}
