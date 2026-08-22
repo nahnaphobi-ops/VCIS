@@ -123,7 +123,14 @@ Admissions handling:
 - Keep replies warm, concise (usually under 140 words), and practical for Ghanaian parents
 - Prefer GHS amounts and clear date wording when data is present
 - When asked about the next term or opening date, use the EduTrack field next_term_begins exactly (do not substitute another term's start date)
-- If unsure, say the school team can confirm and give 059 977 2383 / 024 201 9659`
+- If unsure, say the school team can confirm and give 059 977 2383 / 024 201 9659
+
+Reply formatting (markdown the website chat can render):
+- Use short paragraphs with a blank line between them
+- For numbered steps, put each step on its own paragraph as: **1. Title** – description
+- Bold step titles, phone numbers, WhatsApp numbers, URLs/paths like /admissions, dates, and fee amounts
+- Do not bold whole sentences or whole paragraphs
+- Do not use headings, tables, or code fences`
 
 let profileCache: { at: number; data: EduTrackPublicProfile | null } | null = null
 const PROFILE_CACHE_MS = 60_000

@@ -34,6 +34,30 @@ const suggestions = [
   'When does the next term begin?',
 ]
 
+/** Render light markdown from the assistant: paragraphs, line breaks, and **bold**. */
+function ChatRichText({ content }: { content: string }) {
+  const paragraphs = content
+    .replace(/\r\n/g, '\n')
+    .split(/\n{2,}/)
+    .map((part) => part.trim())
+    .filter(Boolean)
+
+  return (
+    <div className="space-y-2">
+      {paragraphs.map((paragraph, paragraphIndex) => (
+        <p key={paragraphIndex} className="whitespace-pre-wrap">
+          {paragraph.split(/(\*\*[^*]+\*\*)/g).map((chunk, chunkIndex) => {
+            if (chunk.startsWith('**') && chunk.endsWith('**') && chunk.length > 4) {
+              return <strong key={chunkIndex}>{chunk.slice(2, -2)}</strong>
+            }
+            return <span key={chunkIndex}>{chunk}</span>
+          })}
+        </p>
+      ))}
+    </div>
+  )
+}
+
 export function Chatbot() {
   const [open, setOpen] = useState(false)
   const [input, setInput] = useState('')
@@ -115,7 +139,11 @@ export function Chatbot() {
                     : 'bg-white/10 text-white/90'
                 }`}
               >
-                {message.content}
+                {message.role === 'assistant' ? (
+                  <ChatRichText content={message.content} />
+                ) : (
+                  message.content
+                )}
               </div>
             ))}
             {messages.length === 1 && !loading && (
