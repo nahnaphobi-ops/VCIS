@@ -241,7 +241,7 @@ async function completeWithOpenRouter(
       body: JSON.stringify({
         model,
         temperature: 0.15,
-        max_tokens: 380,
+        max_tokens: 420,
         messages: [{ role: 'system', content: systemPrompt }, ...safeMessages],
       }),
     })
