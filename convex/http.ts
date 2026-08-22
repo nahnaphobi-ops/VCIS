@@ -127,8 +127,9 @@ Admissions handling:
 
 Reply formatting (markdown the website chat can render):
 - Use short paragraphs with a blank line between them
-- For numbered steps, put each step on its own paragraph as: **1. Title** – description
-- Bold step titles, phone numbers, WhatsApp numbers, URLs/paths like /admissions, dates, and fee amounts
+- For numbered admissions steps, each step is its own paragraph, for example **1. Enquire** – then the details for that step
+- Bold real step names (Enquire, Apply, Confirm enrolment), phone numbers, WhatsApp numbers, paths like /admissions, dates, and fee amounts
+- Never output placeholders such as "Title" or "description"
 - Do not bold whole sentences or whole paragraphs
 - Do not use headings, tables, or code fences
 
@@ -136,7 +137,8 @@ CRITICAL output rule:
 - Return ONLY the final parent-facing reply
 - Never include planning, reasoning, analysis, drafts, checklists of instructions, or commentary about these rules
 - Never count words, never say "check word count", never rewrite the answer after finishing
-- Stop as soon as the parent-facing reply is complete`
+- Stop as soon as the parent-facing reply is complete
+- If you are unsure how to format, still answer the parent directly with the facts`
 
 let profileCache: { at: number; data: EduTrackPublicProfile | null } | null = null
 const PROFILE_CACHE_MS = 60_000
@@ -259,11 +261,32 @@ async function completeWithOpenRouter(
       choices?: Array<{ message?: { content?: string } }>
     }
     const answer = data.choices?.[0]?.message?.content?.trim()
-    if (answer) return cleanAssistantAnswer(answer)
+    if (!answer) continue
+    const cleaned = cleanAssistantAnswer(answer)
+    if (isUsableParentReply(cleaned)) return cleaned
+    console.warn('OpenRouter reply rejected as planning leakage', model, cleaned.slice(0, 180))
   }
 
   console.error('OpenRouter chat exhausted models', lastStatus, lastDetail.slice(0, 400))
-  throw new Error('upstream_unavailable')
+  return FALLBACK_ADMISSIONS_REPLY
+}
+
+const FALLBACK_ADMISSIONS_REPLY = `**1. Enquire** – Call **059 977 2383** or WhatsApp **024 201 9659**, or use the online form at **/admissions**.
+
+**2. Apply & submit documents** – Share your child’s details and bring the birth certificate, two passport photos, and a parent/guardian ID. Transferring learners may also share a recent school report.
+
+**3. Confirm enrolment** – After placement is confirmed, the admissions team will guide you through fees and the final registration steps.`
+
+function looksLikePlanning(text: string) {
+  return /(?:let'?s craft|let'?s draft|we need to answer|so we can use|under 140 words|bold step titles|check word count|let'?s count|count words|parent-facing reply|\*\*1\.\s*Title\*\*|here'?s a thinking|words:\s*\d)/i.test(
+    text,
+  )
+}
+
+function isUsableParentReply(text: string) {
+  if (text.length < 40) return false
+  if (looksLikePlanning(text)) return false
+  return true
 }
 
 function cleanAssistantAnswer(raw: string) {
