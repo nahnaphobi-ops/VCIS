@@ -130,7 +130,11 @@ Reply formatting (markdown the website chat can render):
 - For numbered steps, put each step on its own paragraph as: **1. Title** – description
 - Bold step titles, phone numbers, WhatsApp numbers, URLs/paths like /admissions, dates, and fee amounts
 - Do not bold whole sentences or whole paragraphs
-- Do not use headings, tables, or code fences`
+- Do not use headings, tables, or code fences
+
+CRITICAL output rule:
+- Return ONLY the final parent-facing reply
+- Never include planning, reasoning, analysis, drafts, checklists of instructions, or commentary about these rules`
 
 let profileCache: { at: number; data: EduTrackPublicProfile | null } | null = null
 const PROFILE_CACHE_MS = 60_000
@@ -233,7 +237,7 @@ async function completeWithOpenRouter(
       body: JSON.stringify({
         model,
         temperature: 0.25,
-        max_tokens: 450,
+        max_tokens: 550,
         messages: [{ role: 'system', content: systemPrompt }, ...safeMessages],
       }),
     })
@@ -253,11 +257,34 @@ async function completeWithOpenRouter(
       choices?: Array<{ message?: { content?: string } }>
     }
     const answer = data.choices?.[0]?.message?.content?.trim()
-    if (answer) return answer
+    if (answer) return cleanAssistantAnswer(answer)
   }
 
   console.error('OpenRouter chat exhausted models', lastStatus, lastDetail.slice(0, 400))
   throw new Error('upstream_unavailable')
+}
+
+function cleanAssistantAnswer(raw: string) {
+  let text = raw.replace(/\r\n/g, '\n').trim()
+
+  const markerMatch = text.match(
+    /(?:^|\n)(?:Draft:|Final answer:|Final reply:|Reply:|Parent-facing reply:)\s*\n+([\s\S]+)$/i,
+  )
+  if (markerMatch?.[1]) text = markerMatch[1].trim()
+
+  // Drop leaked chain-of-thought before the first real formatted step/paragraph.
+  const stepIndex = text.search(/\n\n\*\*\d+\.\s/)
+  if (stepIndex > 0 && /(?:we need to|let'?s craft|the user|instruction)/i.test(text.slice(0, stepIndex))) {
+    const introEnd = text.lastIndexOf('\n\n', stepIndex)
+    text = text.slice(introEnd >= 0 ? introEnd : stepIndex).trim()
+  }
+
+  if (/^(?:we need to|let'?s|okay,? the user|the instruction|i need to)\b/i.test(text)) {
+    const firstGood = text.search(/\n\n(?!\s*(?:we need to|let'?s|okay|the instruction|i need to)\b)/i)
+    if (firstGood > 0) text = text.slice(firstGood).trim()
+  }
+
+  return text.replace(/\n{3,}/g, '\n\n').trim()
 }
 
 async function fetchEduTrackPublicProfile(): Promise<EduTrackPublicProfile | null> {
