@@ -3,7 +3,7 @@ import { httpAction } from './_generated/server'
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions'
 
-/** Free OpenRouter models only (no paid Llama). */
+/** Free OpenRouter models only (Gemma first; others as rate-limit backups). */
 const OPENROUTER_MODELS = [
   process.env.OPENROUTER_MODEL,
   'google/gemma-4-26b-a4b-it:free',
@@ -283,6 +283,12 @@ function cleanAssistantAnswer(raw: string) {
     const firstGood = text.search(/\n\n(?!\s*(?:we need to|let'?s|okay|the instruction|i need to)\b)/i)
     if (firstGood > 0) text = text.slice(firstGood).trim()
   }
+
+  // Cut trailing planning / word-count commentary after a finished reply.
+  const trailingMeta = text.search(
+    /\n\n(?:Now |Let's |Let us |I need to |Word count|Count words|Roughly |Okay,? now )/i,
+  )
+  if (trailingMeta > 0) text = text.slice(0, trailingMeta).trim()
 
   return text.replace(/\n{3,}/g, '\n\n').trim()
 }
