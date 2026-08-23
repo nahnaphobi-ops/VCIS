@@ -78,6 +78,8 @@ function LiveAnnouncements() {
         title: string
         body: string
         category: string
+        imageUrl: string | null
+        attachmentType?: string
       }>
     | undefined
 
@@ -99,6 +101,12 @@ function LiveAnnouncements() {
               {announcement.category}
             </p>
             <h4 className="mt-1 font-extrabold text-[var(--navy)]">{announcement.title}</h4>
+            {announcement.imageUrl && announcement.attachmentType?.startsWith('image/') ? (
+              <a href={announcement.imageUrl} target="_blank" rel="noopener noreferrer" className="mt-3 block overflow-hidden rounded-[10px] bg-[var(--cream)]">
+                <img src={announcement.imageUrl} alt="" className="max-h-72 w-full object-contain" loading="lazy" />
+                <span className="sr-only">Open announcement attachment</span>
+              </a>
+            ) : announcement.imageUrl ? <a href={announcement.imageUrl} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex text-sm font-bold text-[var(--orange)]">View attached flyer (PDF) →</a> : null}
             <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{announcement.body}</p>
           </article>
         ))}

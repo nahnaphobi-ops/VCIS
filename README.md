@@ -58,16 +58,25 @@ The frontend prefers `VITE_CONVEX_SITE_URL` for HTTP actions (falls back to
 The protected admin area is available at `/admin`. It uses Clerk for identity
 and Convex for announcements, photo metadata, and image storage.
 
+This project’s **live** Clerk instance uses a Frontend API **proxy** at `/__clerk`
+(required because the custom FAPI host is not directly usable). Local Vite and
+Vercel both proxy that path to Clerk.
+
 1. Create a Clerk application and a JWT template named **`convex`** (required — not the default session token).
-2. Set `VITE_CLERK_PUBLISHABLE_KEY` and `VITE_CONVEX_URL` in the frontend environment.
-3. Configure the Convex deployment:
+2. Set frontend env:
+   - `VITE_CLERK_PUBLISHABLE_KEY` (live `pk_live_…`)
+   - `VITE_CLERK_PROXY_URL=/__clerk`
+   - `VITE_CONVEX_URL`
+3. Set server env (Vercel + local `.env.local`, never commit secrets):
+   - `CLERK_SECRET_KEY` (live `sk_live_…`)
+   - `CLERK_PROXY_URL=https://vcis-alpha.vercel.app/__clerk`
+4. Configure the Convex deployment:
 
 ```bash
-npx convex env set CLERK_JWT_ISSUER_DOMAIN https://YOUR_CLERK_INSTANCE.clerk.accounts.dev
+npx convex env set CLERK_JWT_ISSUER_DOMAIN https://clerk.vcis-alpha.vercel.app
 npx convex env set ADMIN_EMAILS admin@example.com
 npx convex dev
 ```
 
 Only email addresses listed in `ADMIN_EMAILS` can read or mutate admin content.
-The server validates announcement text and restricts uploads to JPG, PNG, and
-WebP files up to 5MB in the admin client before storing them in Convex storage.
+Uploads are validated server-side (images/PDF for announcements; images for gallery).

@@ -112,7 +112,7 @@ const FUNCTIONS_BASE = (
 
 const ANON_KEY =
   import.meta.env.VITE_EDUTRACK_ANON_KEY ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVnZGp6YXJ2enp4YWZqZGNlbXl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1MzAwOTAsImV4cCI6MjA5NjEwNjA5MH0._uZLXYBbcJhqQOSm_auF591KEe03k6votH57h8Y5FeE'
+  ''
 
 let cached: { at: number; data: EduTrackPublicProfile | null } | null = null
 const CACHE_MS = 60_000

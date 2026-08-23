@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { useQuery } from 'convex/react'
 import { school } from '../lib/school'
@@ -123,6 +123,7 @@ const galleryItems = [
 export function Gallery() {
   const reduceMotion = useReducedMotion()
   const [active, setActive] = useState<(typeof galleryItems)[number] | null>(null)
+  const [hasManagedPhotos, setHasManagedPhotos] = useState(false)
   const [filter, setFilter] = useState<'all' | 'learning' | 'community'>('all')
   const visibleItems = galleryItems.filter((item) => {
     if (filter === 'all') return true
@@ -157,6 +158,7 @@ export function Gallery() {
           </a>
         </motion.div>
 
+        {!hasManagedPhotos && <div>
         <div className="mt-8 flex flex-wrap gap-2" aria-label="Gallery filters">
           {(['all', 'learning', 'community'] as const).map((item) => (
             <button
@@ -205,8 +207,9 @@ export function Gallery() {
             </motion.button>
           ))}
         </motion.div>
+        </div>}
 
-        {import.meta.env.VITE_CONVEX_URL ? <ManagedPhotos /> : null}
+        {import.meta.env.VITE_CONVEX_URL ? <ManagedPhotos onHasPhotos={setHasManagedPhotos} /> : null}
       </div>
 
       <AnimatePresence>
@@ -247,13 +250,17 @@ export function Gallery() {
   )
 }
 
-function ManagedPhotos() {
+function ManagedPhotos({ onHasPhotos }: { onHasPhotos: (hasPhotos: boolean) => void }) {
   const photos = useQuery(api.content.listPublicPhotos, {}) as Array<{
     _id: string
     url: string | null
     title: string
     alt: string
   }> | undefined
+
+  useEffect(() => {
+    onHasPhotos(Boolean(photos?.length))
+  }, [onHasPhotos, photos?.length])
 
   if (!photos?.length) return null
 

@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ReactNode } from 'react'
+import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import { SignInButton, UserButton, useAuth, useUser } from '@clerk/clerk-react'
 import { useMutation, useQuery } from 'convex/react'
 import { api } from '../lib/convexApi'
@@ -9,6 +9,33 @@ export function AdminPage() {
   const { isLoaded, isSignedIn } = useAuth()
   const { user } = useUser()
   const [tab, setTab] = useState<ContentTab>('overview')
+  const [loadTimedOut, setLoadTimedOut] = useState(false)
+
+  useEffect(() => {
+    if (isLoaded) {
+      setLoadTimedOut(false)
+      return
+    }
+    const timer = window.setTimeout(() => setLoadTimedOut(true), 8000)
+    return () => window.clearTimeout(timer)
+  }, [isLoaded])
+
+  if (!isLoaded && loadTimedOut) {
+    return (
+      <AdminShell>
+        <div className="mx-auto max-w-md rounded-[16px] bg-white p-8 text-center shadow-[var(--shadow)]">
+          <h1 className="text-2xl font-extrabold text-[var(--navy)]">Admin sign-in unavailable</h1>
+          <p className="mt-3 text-sm leading-relaxed text-[var(--muted)]">
+            Clerk could not finish loading this session. Confirm the live Clerk proxy at{' '}
+            <code className="text-[var(--navy)]">/__clerk</code> is working, then refresh.
+          </p>
+          <a href="/admin" className="btn btn-primary mt-7 inline-flex">
+            Try again
+          </a>
+        </div>
+      </AdminShell>
+    )
+  }
 
   if (!isLoaded) return <AdminShell><AdminMessage title="Loading admin area" body="Checking your secure session…" /></AdminShell>
   if (!isSignedIn) {
@@ -111,20 +138,32 @@ function Overview({ onNavigate }: { onNavigate: (tab: ContentTab) => void }) {
 
 function Announcements() {
   const data = useQuery(api.content.listAdminContent, {}) as { announcements: Announcement[] } | undefined
+  const getUploadUrl = useMutation(api.content.generateUploadUrl)
   const create = useMutation(api.content.createAnnouncement)
   const remove = useMutation(api.content.deleteAnnouncement)
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
   const [category, setCategory] = useState('School news')
+  const [file, setFile] = useState<File | null>(null)
   const [isPublished, setIsPublished] = useState(true)
   const [status, setStatus] = useState('')
 
   async function submit(event: FormEvent) {
     event.preventDefault()
+    if (file && (!['image/jpeg', 'image/png', 'image/webp', 'application/pdf'].includes(file.type) || file.size > 10 * 1024 * 1024)) {
+      return setStatus('Use a JPG, PNG, WebP, or PDF flyer up to 10MB.')
+    }
     setStatus('Saving…')
     try {
-      await create({ title, body, category, isPublished })
-      setTitle(''); setBody(''); setStatus('Announcement saved.')
+      let imageStorageId: string | undefined
+      if (file) {
+        const uploadUrl = await getUploadUrl({})
+        const response = await fetch(uploadUrl, { method: 'POST', headers: { 'Content-Type': file.type }, body: file })
+        if (!response.ok) throw new Error('Announcement image upload failed.')
+        imageStorageId = (await response.json() as { storageId: string }).storageId
+      }
+      await create({ title, body, category, isPublished, imageStorageId, attachmentType: file?.type })
+      setTitle(''); setBody(''); setFile(null); setStatus('Announcement saved.')
     } catch (error) {
       setStatus(error instanceof Error ? error.message : 'Unable to save announcement.')
     }
@@ -138,6 +177,7 @@ function Announcements() {
         <label className="mt-6 block text-xs font-bold tracking-wide text-[var(--navy)] uppercase">Title<input required maxLength={120} value={title} onChange={(event) => setTitle(event.target.value)} className="input-field mt-2 border border-[var(--cream-muted)]" /></label>
         <label className="mt-4 block text-xs font-bold tracking-wide text-[var(--navy)] uppercase">Category<input required maxLength={40} value={category} onChange={(event) => setCategory(event.target.value)} className="input-field mt-2 border border-[var(--cream-muted)]" /></label>
         <label className="mt-4 block text-xs font-bold tracking-wide text-[var(--navy)] uppercase">Message<textarea required maxLength={4000} rows={7} value={body} onChange={(event) => setBody(event.target.value)} className="input-field mt-2 resize-y border border-[var(--cream-muted)]" /></label>
+        <label className="mt-4 block text-xs font-bold tracking-wide text-[var(--navy)] uppercase">Image or flyer<span className="mt-1 block font-normal normal-case text-[var(--muted)]">Optional. JPG, PNG, WebP, or PDF up to 10MB.</span><input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" onChange={(event) => setFile(event.target.files?.[0] ?? null)} className="mt-2 block w-full text-sm text-[var(--muted)] file:mr-3 file:rounded-full file:border-0 file:bg-[var(--cream)] file:px-4 file:py-2 file:font-semibold file:text-[var(--navy)]" /></label>
         <label className="mt-4 flex items-center gap-3 text-sm font-semibold text-[var(--navy)]"><input type="checkbox" checked={isPublished} onChange={(event) => setIsPublished(event.target.checked)} /> Publish immediately</label>
         <button type="submit" className="btn btn-primary mt-6">Save announcement</button>
         {status && <p className="mt-3 text-sm text-[var(--muted)]" role="status">{status}</p>}
@@ -149,7 +189,7 @@ function Announcements() {
 
 function Photos() {
   const data = useQuery(api.content.listAdminContent, {}) as { photos: Photo[] } | undefined
-  const getUploadUrl = useMutation(api.content.generatePhotoUploadUrl)
+  const getUploadUrl = useMutation(api.content.generateUploadUrl)
   const create = useMutation(api.content.createPhoto)
   const remove = useMutation(api.content.deletePhoto)
   const [title, setTitle] = useState('')
@@ -188,18 +228,18 @@ function Photos() {
         {status && <p className="mt-3 text-sm text-[var(--muted)]" role="status">{status}</p>}
       </form>
       <div className="grid gap-4 sm:grid-cols-2">
-        {(data?.photos ?? []).map((photo) => <article key={photo._id} className="overflow-hidden rounded-[14px] bg-white shadow-[var(--shadow)]"><img src={photo.url ?? ''} alt={photo.alt} className="h-44 w-full object-cover" /><div className="flex items-start justify-between gap-3 p-4"><div><h3 className="font-extrabold text-[var(--navy)]">{photo.title}</h3><p className="mt-1 text-xs text-[var(--muted)]">{photo.category}</p></div><button type="button" onClick={() => void remove({ id: photo._id })} className="text-xs font-bold text-[var(--orange)]">Delete</button></div></article>)}
+         {(data?.photos ?? []).map((photo) => <article key={photo._id} className="overflow-hidden rounded-[14px] bg-white shadow-[var(--shadow)]"><img src={photo.url ?? ''} alt={photo.alt} className="h-44 w-full object-cover" /><div className="flex items-start justify-between gap-3 p-4"><div><h3 className="font-extrabold text-[var(--navy)]">{photo.title}</h3><p className="mt-1 text-xs text-[var(--muted)]">{photo.category}</p></div><button type="button" onClick={() => { if (window.confirm(`Delete ${photo.title}?`)) void remove({ id: photo._id }) }} className="text-xs font-bold text-[var(--orange)]">Delete</button></div></article>)}
         {!data?.photos.length && <AdminMessage title="No photos yet" body="Upload your first school-life image to populate the gallery." />}
       </div>
     </section>
   )
 }
 
-type Announcement = { _id: string; title: string; body: string; category: string; isPublished: boolean }
+type Announcement = { _id: string; title: string; body: string; category: string; isPublished: boolean; imageUrl: string | null; attachmentType?: string }
 type Photo = { _id: string; title: string; alt: string; category: string; url: string | null }
 
 function ContentList({ title, empty, items, onDelete }: { title: string; empty: string; items: Announcement[]; onDelete: (id: string) => void }) {
-  return <div className="rounded-[14px] bg-white p-6 shadow-[var(--shadow)] sm:p-8"><div className="flex items-center justify-between gap-3"><h2 className="text-2xl font-extrabold text-[var(--navy)]">{title}</h2><span className="rounded-full bg-[var(--cream)] px-3 py-1 text-xs font-bold text-[var(--navy)]">{items.length}</span></div><div className="mt-6 space-y-3">{items.map((item) => <article key={item._id} className="rounded-[12px] border border-[var(--cream-muted)] p-4"><div className="flex items-start justify-between gap-3"><div><span className="text-[10px] font-bold tracking-wide text-[var(--orange)] uppercase">{item.category} · {item.isPublished ? 'Published' : 'Draft'}</span><h3 className="mt-1 font-extrabold text-[var(--navy)]">{item.title}</h3></div><button type="button" onClick={() => onDelete(item._id)} className="text-xs font-bold text-[var(--orange)]">Delete</button></div><p className="mt-2 line-clamp-3 text-sm leading-relaxed text-[var(--muted)]">{item.body}</p></article>)}{items.length === 0 && <p className="text-sm text-[var(--muted)]">{empty}</p>}</div></div>
+  return <div className="rounded-[14px] bg-white p-6 shadow-[var(--shadow)] sm:p-8"><div className="flex items-center justify-between gap-3"><h2 className="text-2xl font-extrabold text-[var(--navy)]">{title}</h2><span className="rounded-full bg-[var(--cream)] px-3 py-1 text-xs font-bold text-[var(--navy)]">{items.length}</span></div><div className="mt-6 space-y-3">{items.map((item) => <article key={item._id} className="overflow-hidden rounded-[12px] border border-[var(--cream-muted)]"><div className="flex items-start justify-between gap-3 p-4"><div><span className="text-[10px] font-bold tracking-wide text-[var(--orange)] uppercase">{item.category} · {item.isPublished ? 'Published' : 'Draft'}</span><h3 className="mt-1 font-extrabold text-[var(--navy)]">{item.title}</h3></div><button type="button" onClick={() => { if (window.confirm(`Delete ${item.title}?`)) onDelete(item._id) }} className="text-xs font-bold text-[var(--orange)]">Delete</button></div>{item.imageUrl ? <img src={item.imageUrl} alt="" className="max-h-72 w-full object-contain bg-[var(--cream)]" /> : null}<p className="p-4 pt-0 text-sm leading-relaxed text-[var(--muted)]">{item.body}</p></article>)}{items.length === 0 && <p className="text-sm text-[var(--muted)]">{empty}</p>}</div></div>
 }
 
 function AdminShell({ children }: { children: ReactNode }) {

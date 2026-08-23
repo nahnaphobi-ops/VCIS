@@ -1,10 +1,13 @@
 import { ConvexError, v } from 'convex/values'
 import { mutation, query } from './_generated/server'
+import type { Id } from './_generated/dataModel'
 
 const announcementInput = {
   title: v.string(),
   body: v.string(),
   category: v.string(),
+  imageStorageId: v.optional(v.id('_storage')),
+  attachmentType: v.optional(v.string()),
   isPublished: v.boolean(),
 }
 
@@ -17,7 +20,12 @@ export const listPublicAnnouncements = query({
       .order('desc')
       .take(12)
 
-    return items
+    return Promise.all(
+      items.map(async (item) => ({
+        ...item,
+        imageUrl: item.imageStorageId ? await ctx.storage.getUrl(item.imageStorageId) : null,
+      })),
+    )
   },
 })
 
@@ -46,7 +54,14 @@ export const listAdminContent = query({
     ])
 
     return {
-      announcements,
+      announcements: await Promise.all(
+        announcements.map(async (announcement) => ({
+          ...announcement,
+          imageUrl: announcement.imageStorageId
+            ? await ctx.storage.getUrl(announcement.imageStorageId)
+            : null,
+        })),
+      ),
       photos: await Promise.all(
         photos.map(async (photo) => ({ ...photo, url: await ctx.storage.getUrl(photo.storageId) })),
       ),
@@ -61,6 +76,9 @@ export const createAnnouncement = mutation({
     validateText(args.title, 2, 120, 'title')
     validateText(args.body, 2, 4000, 'body')
     validateText(args.category, 2, 40, 'category')
+    if (args.imageStorageId) {
+      await validateUpload(ctx, args.imageStorageId, ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'])
+    }
     const now = Date.now()
     return ctx.db.insert('announcements', {
       ...args,
@@ -82,12 +100,20 @@ export const updateAnnouncement = mutation({
     validateText(args.title, 2, 120, 'title')
     validateText(args.body, 2, 4000, 'body')
     validateText(args.category, 2, 40, 'category')
+    if (args.imageStorageId) {
+      await validateUpload(ctx, args.imageStorageId, ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'])
+    }
     const current = await ctx.db.get(args.id)
     if (!current) throw new ConvexError('Announcement not found.')
+    if (current.imageStorageId && current.imageStorageId !== args.imageStorageId) {
+      await ctx.storage.delete(current.imageStorageId)
+    }
     await ctx.db.patch(args.id, {
       title: args.title.trim(),
       body: args.body.trim(),
       category: args.category.trim(),
+      imageStorageId: args.imageStorageId,
+      attachmentType: args.attachmentType,
       isPublished: args.isPublished,
       publishedAt: args.isPublished ? current.publishedAt ?? Date.now() : undefined,
       updatedAt: Date.now(),
@@ -99,11 +125,14 @@ export const deleteAnnouncement = mutation({
   args: { id: v.id('announcements') },
   handler: async (ctx, args) => {
     await requireAdmin(ctx)
+    const announcement = await ctx.db.get(args.id)
+    if (!announcement) return
+    if (announcement.imageStorageId) await ctx.storage.delete(announcement.imageStorageId)
     await ctx.db.delete(args.id)
   },
 })
 
-export const generatePhotoUploadUrl = mutation({
+export const generateUploadUrl = mutation({
   args: {},
   handler: async (ctx) => {
     await requireAdmin(ctx)
@@ -121,6 +150,7 @@ export const createPhoto = mutation({
   },
   handler: async (ctx, args) => {
     await requireAdmin(ctx)
+    await validateUpload(ctx, args.storageId, ['image/jpeg', 'image/png', 'image/webp'])
     validateText(args.title, 2, 120, 'title')
     validateText(args.alt, 2, 180, 'alt text')
     validateText(args.category, 2, 40, 'category')
@@ -154,5 +184,22 @@ function validateText(value: string, min: number, max: number, label: string) {
   const trimmed = value.trim()
   if (trimmed.length < min || trimmed.length > max) {
     throw new ConvexError(`${label} must be between ${min} and ${max} characters.`)
+  }
+}
+
+async function validateUpload(
+  ctx: {
+    storage: {
+      getMetadata: (id: Id<'_storage'>) => Promise<{ contentType?: string; size: number } | null>
+      delete: (id: Id<'_storage'>) => Promise<void>
+    }
+  },
+  storageId: Id<'_storage'>,
+  allowedTypes: string[],
+) {
+  const metadata = await ctx.storage.getMetadata(storageId)
+  if (!metadata || !metadata.contentType || !allowedTypes.includes(metadata.contentType) || metadata.size > 10 * 1024 * 1024) {
+    await ctx.storage.delete(storageId)
+    throw new ConvexError('This file type or size is not allowed.')
   }
 }

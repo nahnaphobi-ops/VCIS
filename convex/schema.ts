@@ -6,6 +6,8 @@ export default defineSchema({
     title: v.string(),
     body: v.string(),
     category: v.string(),
+    imageStorageId: v.optional(v.id('_storage')),
+    attachmentType: v.optional(v.string()),
     isPublished: v.boolean(),
     publishedAt: v.optional(v.number()),
     createdAt: v.number(),
