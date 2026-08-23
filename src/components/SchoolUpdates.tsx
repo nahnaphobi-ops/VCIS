@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useSchool } from '../lib/useSchool'
-import { formatDisplayDate, formatTermLabel } from '../lib/edutrack'
+import { formatDisplayDate, formatTermLabel, uniqueSubjectNames } from '../lib/edutrack'
 import { fadeUp, viewportOnce } from '../lib/motion'
 
 function money(amount: number) {
@@ -10,6 +10,12 @@ function money(amount: number) {
     currency: 'GHS',
     maximumFractionDigits: 0,
   }).format(amount)
+}
+
+function panelsGridClass(count: number) {
+  if (count <= 1) return 'mt-12 mx-auto grid w-full max-w-md gap-6'
+  if (count === 2) return 'mt-12 grid gap-6 md:grid-cols-2'
+  return 'mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3'
 }
 
 export function SchoolUpdates() {
@@ -21,21 +27,30 @@ export function SchoolUpdates() {
   const academic = live.academic
   const termKey = `term_${academic.term}` as 'term_1' | 'term_2' | 'term_3'
   const currentTermDates = academic[termKey]
+  const roomsRaw = live.classes ?? []
+  const levelOrder = new Map((live.class_levels ?? []).map((l, i) => [l.value, l.sort_order ?? i]))
+  const rooms = [...roomsRaw].sort((a, b) => {
+    const ao = levelOrder.get(a.class_level) ?? 999
+    const bo = levelOrder.get(b.class_level) ?? 999
+    if (ao !== bo) return ao - bo
+    return a.class_name.localeCompare(b.class_name)
+  })
+  const subjects = uniqueSubjectNames(live.subjects)
+
   const hasCalendar =
     Boolean(currentTermDates?.start || currentTermDates?.end || academic.next_term_begins) ||
     live.events.length > 0
   const hasNotices = live.notices.length > 0
   const hasFees = live.fees.length > 0 || live.fee_categories.length > 0
+  const hasClasses = rooms.length > 0
+  const hasSubjects = subjects.length > 0
 
-  if (!hasCalendar && !hasNotices && !hasFees) return null
+  if (!hasCalendar && !hasNotices && !hasFees && !hasClasses && !hasSubjects) return null
 
-  const panelCount = [hasCalendar, hasNotices, hasFees].filter(Boolean).length
-  const panelsClass =
-    panelCount === 1
-      ? 'mt-12 mx-auto grid w-full max-w-md gap-6'
-      : panelCount === 2
-        ? 'mt-12 grid gap-6 md:grid-cols-2'
-        : 'mt-12 grid gap-6 lg:grid-cols-3'
+  const panelCount = [hasCalendar, hasNotices, hasFees, hasClasses, hasSubjects].filter(Boolean)
+    .length
+
+  const classLevelSpan = 'Creche to JHS 3'
 
   return (
     <section className="section-pad bg-white">
@@ -50,12 +65,12 @@ export function SchoolUpdates() {
           <p className="kicker">From EduTrack</p>
           <h2 className="heading-display text-[var(--navy)]">Live school information.</h2>
           <p className="mt-4 text-base leading-relaxed text-[var(--muted)] md:text-lg">
-            Term dates, notices, and published fee details sync from the Victoria Crest EduTrack
-            system.
+            Term dates, active classes, subjects, notices, and published fees sync from the Victoria
+            Crest EduTrack system.
           </p>
         </motion.div>
 
-        <div className={panelsClass}>
+        <div className={panelsGridClass(panelCount)}>
           {hasCalendar ? (
             <article className="rounded-[12px] bg-[var(--cream)] p-6">
               <p className="text-xs font-bold tracking-[0.18em] text-[var(--orange)] uppercase">
@@ -97,6 +112,44 @@ export function SchoolUpdates() {
                   ))}
                 </ul>
               ) : null}
+            </article>
+          ) : null}
+
+          {hasClasses ? (
+            <article className="rounded-[12px] bg-[var(--cream)] p-6">
+              <p className="text-xs font-bold tracking-[0.18em] text-[var(--orange)] uppercase">
+                Active classes
+              </p>
+              <h3 className="mt-3 text-xl font-extrabold text-[var(--navy)]">
+                {rooms.length} class rooms · {classLevelSpan}
+              </h3>
+              <ul className="mt-4 space-y-2 text-sm text-[var(--muted)]">
+                <li>
+                  Placement:{' '}
+                  <span className="font-semibold text-[var(--navy)]">
+                    Confirmed with families during admissions
+                  </span>
+                </li>
+              </ul>
+            </article>
+          ) : null}
+
+          {hasSubjects ? (
+            <article className="rounded-[12px] bg-[var(--cream)] p-6">
+              <p className="text-xs font-bold tracking-[0.18em] text-[var(--orange)] uppercase">
+                Subjects
+              </p>
+              <h3 className="mt-3 text-xl font-extrabold text-[var(--navy)]">
+                {subjects.length} subjects taught
+              </h3>
+              <ul className="mt-4 space-y-2 text-sm text-[var(--muted)]">
+                <li>
+                  Curriculum:{' '}
+                  <span className="font-semibold text-[var(--navy)]">
+                    Synced from EduTrack for each active class
+                  </span>
+                </li>
+              </ul>
             </article>
           ) : null}
 

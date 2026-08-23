@@ -1,7 +1,7 @@
 import { Hero } from '../components/Hero'
 import { Stats } from '../components/Stats'
 import { Programmes } from '../components/Programmes'
-import { SchoolOfferings } from '../components/SchoolOfferings'
+import { DirectorMessage } from '../components/DirectorMessage'
 import { WhyUs } from '../components/WhyUs'
 import { SchoolUpdates } from '../components/SchoolUpdates'
 import { Faq } from '../components/Faq'
@@ -13,7 +13,7 @@ export function HomePage() {
       <Hero />
       <Stats />
       <Programmes />
-      <SchoolOfferings />
+      <DirectorMessage />
       <SchoolUpdates />
       <WhyUs />
       <Faq />
@@ -21,4 +21,3 @@ export function HomePage() {
     </>
   )
 }
-
