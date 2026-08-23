@@ -1,9 +1,25 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
-import { SignInButton, UserButton, useAuth, useUser } from '@clerk/clerk-react'
+import { SignInButton, UserButton, UserProfile, useAuth, useUser } from '@clerk/clerk-react'
 import { useMutation, useQuery } from 'convex/react'
 import { api } from '../lib/convexApi'
 
-type ContentTab = 'overview' | 'announcements' | 'photos'
+type ContentTab = 'overview' | 'announcements' | 'photos' | 'account'
+
+const clerkAppearance = {
+  variables: {
+    colorPrimary: '#f86800',
+    colorText: '#0c1b35',
+    colorTextSecondary: '#5c6570',
+    colorBackground: '#ffffff',
+    colorInputBackground: '#f6f3ef',
+    colorInputText: '#0c1b35',
+    borderRadius: '0.75rem',
+  },
+  elements: {
+    rootBox: 'mx-auto w-full',
+    card: 'shadow-[var(--shadow)]',
+  },
+} as const
 
 export function AdminPage() {
   const { isLoaded, isSignedIn } = useAuth()
@@ -63,13 +79,25 @@ export function AdminPage() {
             <p className="mt-2 text-sm text-[var(--muted)]">Publish announcements and keep the school gallery fresh.</p>
           </div>
           <div className="flex items-center gap-3 rounded-full bg-white px-3 py-2 shadow-[var(--shadow)]">
-            <UserButton afterSignOutUrl="/" />
-            <span className="pr-2 text-xs font-semibold text-[var(--navy)]">{user?.primaryEmailAddress?.emailAddress}</span>
+            <UserButton
+              afterSignOutUrl="/"
+              userProfileMode="modal"
+              appearance={clerkAppearance}
+              userProfileProps={{ appearance: clerkAppearance }}
+            />
+            <button
+              type="button"
+              onClick={() => setTab('account')}
+              className="pr-2 text-left text-xs font-semibold text-[var(--navy)] hover:text-[var(--orange)]"
+            >
+              {user?.primaryEmailAddress?.emailAddress}
+              <span className="mt-0.5 block font-normal text-[var(--muted)]">Manage login →</span>
+            </button>
           </div>
         </header>
 
         <nav className="mt-8 flex gap-2 overflow-x-auto" aria-label="Admin sections">
-          {(['overview', 'announcements', 'photos'] as const).map((item) => (
+          {(['overview', 'announcements', 'photos', 'account'] as const).map((item) => (
             <button
               key={item}
               type="button"
@@ -84,6 +112,7 @@ export function AdminPage() {
         {tab === 'overview' && <Overview onNavigate={setTab} />}
         {tab === 'announcements' && <Announcements />}
         {tab === 'photos' && <Photos />}
+        {tab === 'account' && <AccountSettings />}
       </div>
     </AdminShell>
   )
@@ -129,8 +158,27 @@ function Overview({ onNavigate }: { onNavigate: (tab: ContentTab) => void }) {
           <div className="mt-4 grid gap-3">
             <button type="button" className="btn btn-primary" onClick={() => onNavigate('announcements')}>New announcement</button>
             <button type="button" className="btn btn-outline" onClick={() => onNavigate('photos')}>Upload photos</button>
+            <button type="button" className="btn btn-outline" onClick={() => onNavigate('account')}>Change login details</button>
           </div>
         </div>
+      </div>
+    </section>
+  )
+}
+
+function AccountSettings() {
+  return (
+    <section className="mt-8">
+      <div className="mb-6 max-w-2xl">
+        <p className="kicker">Account</p>
+        <h2 className="text-2xl font-extrabold text-[var(--navy)]">Change your login details.</h2>
+        <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
+          Update your email, password, and security settings with Clerk’s secure account manager.
+          You can also open it from your avatar menu → Manage account.
+        </p>
+      </div>
+      <div className="overflow-hidden rounded-[14px] bg-white p-2 shadow-[var(--shadow)] sm:p-4">
+        <UserProfile appearance={clerkAppearance} routing="hash" />
       </div>
     </section>
   )
