@@ -1,5 +1,6 @@
 import { PageHero } from '../components/PageHero'
 import { Programmes } from '../components/Programmes'
+import { SchoolOfferings } from '../components/SchoolOfferings'
 import { Faq } from '../components/Faq'
 
 export function ProgrammesPage() {
@@ -14,6 +15,7 @@ export function ProgrammesPage() {
         cta={{ to: '/contact', label: 'Ask about placement' }}
       />
       <Programmes />
+      <SchoolOfferings />
       <Faq />
     </>
   )

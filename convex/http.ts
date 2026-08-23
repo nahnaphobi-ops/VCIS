@@ -16,9 +16,16 @@ const EDUTRACK_FUNCTIONS_BASE = (
   'https://egdjzarvzzxafjdcemyy.supabase.co/functions/v1'
 ).replace(/\/$/, '')
 
+const EDUTRACK_SUPABASE_URL = (
+  process.env.EDUTRACK_SUPABASE_URL ||
+  EDUTRACK_FUNCTIONS_BASE.replace(/\/functions\/v1$/, '')
+).replace(/\/$/, '')
+
 const EDUTRACK_ANON_KEY =
   process.env.EDUTRACK_ANON_KEY ||
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVnZGp6YXJ2enp4YWZqZGNlbXl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1MzAwOTAsImV4cCI6MjA5NjEwNjA5MH0._uZLXYBbcJhqQOSm_auF591KEe03k6votH57h8Y5FeE'
+
+const EDUTRACK_SERVICE_ROLE_KEY = process.env.EDUTRACK_SERVICE_ROLE_KEY || ''
 
 const EDUTRACK_SCHOOL_ID =
   process.env.EDUTRACK_SCHOOL_ID || 'victoria-crest-international-school'
@@ -82,6 +89,22 @@ type EduTrackPublicProfile = {
     value: string
     label: string
     category: string
+    sort_order?: number
+  }>
+  classes?: Array<{
+    id: string
+    class_name: string
+    class_level: string
+    academic_year: string
+    label: string
+    category: string
+  }>
+  subjects?: Array<{
+    id: string
+    subject_name: string
+    subject_code: string
+    class_level: string
+    label: string
   }>
   generated_at: string
 }
@@ -96,10 +119,11 @@ const STATIC_SCHOOL_FACTS = `Static school facts (always true):
 - WhatsApp enquiry number: +233 24 201 9659
 - Website: vcis.edu.gh
 - Accreditations: Ghana Education Service (GES), National Schools Inspectorate Authority (NaSIA)
-- Programmes:
-  • Early Years (ages 2–5): play, language, early numeracy, creative expression, independence
-  • Primary (ages 6–11): literacy, numeracy, science/technology, creative & social growth
-  • Junior High (ages 12–14): subject mastery, critical thinking, exam readiness, leadership
+- Programme bands (marketing only — never invent class rooms or subjects from this list):
+  • Early Years (ages 2–5)
+  • Primary (ages 6–11)
+  • Junior High (ages 12–14)
+- Active class rooms, class levels, and subjects MUST come only from Live EduTrack public data below. If a level (e.g. SHS) has no room there, do not offer it.
 - Admissions path: 1) Enquire (call / WhatsApp / online form) → 2) Visit & apply with documents → 3) Confirm enrolment after placement
 - Online applications: submit at /admissions on the school website; applications land in the EduTrack admissions inbox for staff review (they do not auto-enrol)
 - Community: Facebook page https://www.facebook.com/newdestinschool`
@@ -109,7 +133,15 @@ const AGENT_RULES = `You are the Victoria Crest International School website ass
 Your job:
 - Answer from the provided EduTrack public profile and static school facts only
 - Guide families through admissions clearly and helpfully
-- Help with programmes, class levels, term dates, requirements, published fees, notices, events, contact details, and campus visits
+- Help with programmes, class rooms/levels, subjects, term dates, requirements, published fees, notices, events, contact details, and campus visits
+
+Class rooms & subjects (critical):
+- Only mention class levels and rooms listed under Live EduTrack "Active class rooms" / "Active class levels"
+- Only mention subjects listed under Live EduTrack "Active subjects"
+- When naming subjects, list each subject once (never repeat the same subject for every class level)
+- Never invent SHS, Senior High, or any other level/room/subject that is not in that live list
+- If a parent asks about a level the school has not created (e.g. SHS), say Victoria Crest does not currently offer that level in EduTrack and suggest the available rooms, or invite them to call/WhatsApp
+- When recommending placement, map age/current class only onto the live class levels
 
 Admissions handling:
 - Ask for the child's age (or current class) and preferred entry level when helpful
@@ -149,6 +181,35 @@ http.route({
   path: '/chat',
   method: 'OPTIONS',
   handler: httpAction(async () => new Response(null, { status: 204, headers: corsHeaders })),
+})
+
+/** Public school academics proxy — rooms/subjects from EduTrack for the website + chatbot. */
+http.route({
+  path: '/public-school-profile',
+  method: 'OPTIONS',
+  handler: httpAction(async () => new Response(null, { status: 204, headers: corsHeaders })),
+})
+
+http.route({
+  path: '/public-school-profile',
+  method: 'GET',
+  handler: httpAction(async () => {
+    const profile = await fetchEduTrackPublicProfile(true)
+    if (!profile) {
+      return new Response(JSON.stringify({ error: 'School profile unavailable' }), {
+        status: 502,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+    return new Response(JSON.stringify(profile), {
+      status: 200,
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=60',
+      },
+    })
+  }),
 })
 
 http.route({
@@ -278,7 +339,7 @@ const FALLBACK_ADMISSIONS_REPLY = `**1. Enquire** – Call **059 977 2383** or W
 **3. Confirm enrolment** – After placement is confirmed, the admissions team will guide you through fees and the final registration steps.`
 
 function looksLikePlanning(text: string) {
-  return /(?:let'?s craft|let'?s draft|we need to answer|so we can use|under 140 words|bold step titles|check word count|let'?s count|count words|parent-facing reply|\*\*1\.\s*Title\*\*|here'?s a thinking|words:\s*\d)/i.test(
+  return /(?:let'?s craft|let'?s draft|we need to answer|so we can use|under 140 words|bold step titles|check word count|let'?s count|count words|parent-facing reply|\*\*1\.\s*Title\*\*|here'?s a thinking|words:\s*\d|we must not mention|must only mention|that would be long|that'?s safe\.|probably list|we can summarize|so answer\s*$|that'?s the class levels)/i.test(
     text,
   )
 }
@@ -334,8 +395,8 @@ function cleanAssistantAnswer(raw: string) {
   return text.replace(/\n{3,}/g, '\n\n').trim()
 }
 
-async function fetchEduTrackPublicProfile(): Promise<EduTrackPublicProfile | null> {
-  if (profileCache && Date.now() - profileCache.at < PROFILE_CACHE_MS) {
+async function fetchEduTrackPublicProfile(force = false): Promise<EduTrackPublicProfile | null> {
+  if (!force && profileCache && Date.now() - profileCache.at < PROFILE_CACHE_MS) {
     return profileCache.data
   }
 
@@ -355,12 +416,109 @@ async function fetchEduTrackPublicProfile(): Promise<EduTrackPublicProfile | nul
     }
 
     const data = (await res.json()) as EduTrackPublicProfile
-    profileCache = { at: Date.now(), data }
-    return data
+    const enriched = await enrichWithSchoolRoomsAndSubjects(data)
+    profileCache = { at: Date.now(), data: enriched }
+    return enriched
   } catch (error) {
     console.warn('EduTrack public profile error', error)
     profileCache = { at: Date.now(), data: null }
     return null
+  }
+}
+
+type CatalogRow = { value: string; label: string; category: string; sort_order: number }
+type RoomRow = { id: string; class_name: string; class_level: string; academic_year: string }
+type SubjectRow = { id: string; subject_name: string; subject_code: string; class_level: string }
+
+async function enrichWithSchoolRoomsAndSubjects(
+  profile: EduTrackPublicProfile,
+): Promise<EduTrackPublicProfile> {
+  // Prefer rooms already returned by the edge function once it is deployed.
+  if (profile.classes?.length && profile.subjects && profile.class_levels?.length) {
+    const hasCatalogLeak = profile.class_levels.some((l) => String(l.value).startsWith('SHS'))
+    if (!hasCatalogLeak) return profile
+  }
+
+  if (!EDUTRACK_SERVICE_ROLE_KEY) {
+    // Without a service role, drop global-catalog SHS leakage if present with no rooms.
+    if (!profile.classes?.length && profile.class_levels?.some((l) => String(l.value).startsWith('SHS'))) {
+      return { ...profile, class_levels: [], classes: [], subjects: profile.subjects || [] }
+    }
+    return profile
+  }
+
+  try {
+    const headers = {
+      apikey: EDUTRACK_SERVICE_ROLE_KEY,
+      Authorization: `Bearer ${EDUTRACK_SERVICE_ROLE_KEY}`,
+    }
+    const school = encodeURIComponent(EDUTRACK_SCHOOL_ID)
+    const [classesRes, subjectsRes, catalogRes] = await Promise.all([
+      fetch(
+        `${EDUTRACK_SUPABASE_URL}/rest/v1/classes?school_id=eq.${school}&select=id,class_name,class_level,academic_year&order=class_name`,
+        { headers },
+      ),
+      fetch(
+        `${EDUTRACK_SUPABASE_URL}/rest/v1/subjects?school_id=eq.${school}&select=id,subject_name,subject_code,class_level&order=subject_name`,
+        { headers },
+      ),
+      fetch(
+        `${EDUTRACK_SUPABASE_URL}/rest/v1/class_levels?is_active=eq.true&select=value,label,category,sort_order&order=sort_order`,
+        { headers },
+      ),
+    ])
+
+    const classesJson = classesRes.ok ? ((await classesRes.json()) as RoomRow[]) : []
+    const subjectsJson = subjectsRes.ok ? ((await subjectsRes.json()) as SubjectRow[]) : []
+    const catalogJson = catalogRes.ok ? ((await catalogRes.json()) as CatalogRow[]) : []
+
+    const catalog = new Map(catalogJson.map((row) => [row.value, row]))
+    const currentYear = profile.academic?.year
+    const roomsForYear = currentYear
+      ? classesJson.filter((c) => c.academic_year === currentYear)
+      : classesJson
+    const activeRooms = roomsForYear.length > 0 ? roomsForYear : classesJson
+
+    const levelsPresent = new Map<string, CatalogRow>()
+    for (const room of activeRooms) {
+      if (!room.class_level || levelsPresent.has(room.class_level)) continue
+      const meta = catalog.get(room.class_level)
+      levelsPresent.set(room.class_level, {
+        value: room.class_level,
+        label: meta?.label || room.class_level,
+        category: meta?.category || 'Uncategorized',
+        sort_order: meta?.sort_order ?? 999,
+      })
+    }
+
+    const classLevels = [...levelsPresent.values()].sort((a, b) => a.sort_order - b.sort_order)
+    const roomLevelSet = new Set(classLevels.map((l) => l.value))
+
+    return {
+      ...profile,
+      class_levels: classLevels,
+      classes: activeRooms.map((c) => ({
+        id: c.id,
+        class_name: c.class_name,
+        class_level: c.class_level,
+        academic_year: c.academic_year,
+        label: catalog.get(c.class_level)?.label || c.class_level,
+        category: catalog.get(c.class_level)?.category || 'Uncategorized',
+      })),
+      // Only subjects tied to levels that have a school room.
+      subjects: subjectsJson
+        .filter((s) => roomLevelSet.has(s.class_level))
+        .map((s) => ({
+          id: s.id,
+          subject_name: s.subject_name,
+          subject_code: s.subject_code,
+          class_level: s.class_level,
+          label: catalog.get(s.class_level)?.label || s.class_level,
+        })),
+    }
+  } catch (error) {
+    console.warn('EduTrack rooms/subjects enrich failed', error)
+    return profile
   }
 }
 
@@ -391,11 +549,34 @@ function formatEduTrackContext(profile: EduTrackPublicProfile) {
     `Profile generated at: ${profile.generated_at}`,
   ]
 
+  if (profile.classes?.length) {
+    lines.push('Active class rooms (created in EduTrack for this school — use ONLY these):')
+    for (const room of profile.classes) {
+      lines.push(
+        `- ${room.class_name} → ${room.label} / ${room.class_level} (${room.category}, ${room.academic_year})`,
+      )
+    }
+  } else {
+    lines.push('Active class rooms: none published yet — do not invent class rooms or levels')
+  }
+
   if (profile.class_levels?.length) {
     lines.push(
-      'Class levels: ' +
-        profile.class_levels.map((level) => `${level.label} (${level.category})`).join('; '),
+      'Active class levels (derived from rooms above — never invent others): ' +
+        profile.class_levels.map((level) => `${level.label} [${level.value}] (${level.category})`).join('; '),
     )
+  } else {
+    lines.push('Active class levels: none — do not offer SHS or any other catalog level')
+  }
+
+  if (profile.subjects?.length) {
+    const uniqueSubjects = uniqueSubjectNames(profile.subjects)
+    lines.push(
+      'Active subjects (unique names from EduTrack — list each once; do not repeat per class): ' +
+        uniqueSubjects.join('; '),
+    )
+  } else {
+    lines.push('Active subjects: none published yet — do not invent subject lists')
   }
 
   if (profile.enrollment_requirements?.length) {
@@ -452,6 +633,38 @@ function formatEduTrackContext(profile: EduTrackPublicProfile) {
   }
 
   return lines.join('\n')
+}
+
+/** Deduplicate subject display names (case-insensitive), keeping first spelling.
+ * Also collapses near-duplicates like "English" / "English Language". */
+function uniqueSubjectNames(
+  subjects: Array<{ subject_name: string }>,
+): string[] {
+  const seen = new Set<string>()
+  const names: string[] = []
+  for (const subject of subjects) {
+    const raw = subject.subject_name?.trim()
+    if (!raw) continue
+    const key = raw.toLowerCase()
+    if (seen.has(key)) continue
+    seen.add(key)
+    names.push(raw)
+  }
+
+  names.sort((a, b) => a.length - b.length || a.localeCompare(b, undefined, { sensitivity: 'base' }))
+
+  const collapsed: string[] = []
+  for (const name of names) {
+    const lower = name.toLowerCase()
+    const coveredByShorter = collapsed.some((kept) => {
+      const k = kept.toLowerCase()
+      return lower === k || lower.startsWith(`${k} `) || lower.startsWith(`${k}/`)
+    })
+    if (coveredByShorter) continue
+    collapsed.push(name)
+  }
+
+  return collapsed.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
 }
 
 function fmtRange(range: { start: string | null; end: string | null }) {

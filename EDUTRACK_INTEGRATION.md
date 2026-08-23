@@ -7,6 +7,14 @@
 - Notices marked `publish_to_website = true` (and `target_audience = all`)
 - Fee templates / categories marked `is_public = true`
 - Active student headcount (aggregate only — no student PII)
+- Class rooms from `classes` (current academic year preferred; falls back to latest rooms) — not the global class_levels catalog
+- Distinct `class_levels` derived only from those rooms (so SHS never appears unless a room exists)
+- Subjects from `subjects` for levels that have rooms (name/code/level only — no teacher PII)
+
+## Profile consumers
+- Website frontend prefers `https://<deployment>.convex.site/public-school-profile` (rooms/subjects enriched)
+- Chatbot uses the same enriched profile in its system prompt
+- EduTrack edge function `public-school-profile` should also return rooms/subjects (deploy when CLI is logged in)
 
 ## EduTrack setup
 1. Push migration: `supabase/migrations/20260820160000_website_public_publish_flags.sql`

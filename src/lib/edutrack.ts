@@ -73,14 +73,38 @@ export type EduTrackPublicProfile = {
     category: string
     sort_order: number
   }>
+  /** Classrooms created in the school's EduTrack room (current year preferred). */
+  classes?: Array<{
+    id: string
+    class_name: string
+    class_level: string
+    academic_year: string
+    label: string
+    category: string
+  }>
+  /** Subjects created in the school's EduTrack room (no teacher PII). */
+  subjects?: Array<{
+    id: string
+    subject_name: string
+    subject_code: string
+    class_level: string
+    label: string
+  }>
   generated_at: string
 }
 
 const SCHOOL_ID =
   import.meta.env.VITE_EDUTRACK_SCHOOL_ID || 'victoria-crest-international-school'
 
-// Public Supabase anon key + functions URL are safe to ship in the browser client.
-// Env vars still override these when set on Vercel / .env.local.
+// Prefer the Convex proxy (rooms/subjects enriched from EduTrack school data).
+// Fall back to the EduTrack edge function when Convex URL is unset.
+const CONVEX_SITE_BASE = (
+  import.meta.env.VITE_CONVEX_SITE_URL ||
+  (import.meta.env.VITE_CONVEX_URL
+    ? String(import.meta.env.VITE_CONVEX_URL).replace('.convex.cloud', '.convex.site')
+    : 'https://loyal-woodpecker-470.eu-west-1.convex.site')
+).replace(/\/$/, '')
+
 const FUNCTIONS_BASE = (
   import.meta.env.VITE_EDUTRACK_FUNCTIONS_URL ||
   'https://egdjzarvzzxafjdcemyy.supabase.co/functions/v1'
@@ -120,15 +144,26 @@ export function formatStudentCount(count: number) {
 export async function fetchEduTrackPublicProfile(
   force = false,
 ): Promise<EduTrackPublicProfile | null> {
-  if (!FUNCTIONS_BASE || !ANON_KEY) {
-    return null
-  }
-
   if (!force && cached && Date.now() - cached.at < CACHE_MS) {
     return cached.data
   }
 
   try {
+    // Convex proxy first — includes school rooms + subjects only.
+    if (CONVEX_SITE_BASE) {
+      const convexRes = await fetch(`${CONVEX_SITE_BASE}/public-school-profile`)
+      if (convexRes.ok) {
+        const data = (await convexRes.json()) as EduTrackPublicProfile
+        cached = { at: Date.now(), data }
+        return data
+      }
+      console.warn('Convex school profile failed', convexRes.status)
+    }
+
+    if (!FUNCTIONS_BASE || !ANON_KEY) {
+      return null
+    }
+
     const url = `${FUNCTIONS_BASE}/public-school-profile?school_id=${encodeURIComponent(SCHOOL_ID)}`
     const res = await fetch(url, {
       headers: {
@@ -214,4 +249,39 @@ export function mergeSchoolProfile(live: EduTrackPublicProfile | null) {
     location: live.location_label || staticSchool.location,
     edutrack: live,
   }
+}
+
+/** Unique subject display names (case-insensitive), collapsing near-duplicates like English / English Language. */
+export function uniqueSubjectNames(
+  subjects: Array<{ subject_name: string }> | null | undefined,
+): string[] {
+  if (!subjects?.length) return []
+
+  const seen = new Set<string>()
+  const names: string[] = []
+  for (const subject of subjects) {
+    const raw = subject.subject_name?.trim()
+    if (!raw) continue
+    const key = raw.toLowerCase()
+    if (seen.has(key)) continue
+    seen.add(key)
+    names.push(raw)
+  }
+
+  names.sort(
+    (a, b) => a.length - b.length || a.localeCompare(b, undefined, { sensitivity: 'base' }),
+  )
+
+  const collapsed: string[] = []
+  for (const name of names) {
+    const lower = name.toLowerCase()
+    const coveredByShorter = collapsed.some((kept) => {
+      const k = kept.toLowerCase()
+      return lower === k || lower.startsWith(`${k} `) || lower.startsWith(`${k}/`)
+    })
+    if (coveredByShorter) continue
+    collapsed.push(name)
+  }
+
+  return collapsed.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
 }
