@@ -3,8 +3,8 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "rewrites": [
-    { "source": "/__clerk/(.*)", "destination": "/api/clerk-proxy?path=$1" },
     { "source": "/__clerk", "destination": "/api/clerk-proxy?path=" },
+    { "source": "/__clerk/(.*)", "destination": "/api/clerk-proxy?path=$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

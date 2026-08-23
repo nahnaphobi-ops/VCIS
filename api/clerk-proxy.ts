@@ -1,10 +1,17 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
+export const config = {
+  api: {
+    // Forward the exact bytes ClerkJS sends (usually x-www-form-urlencoded).
+    bodyParser: false,
+  },
+}
+
 const FAPI = 'https://frontend-api.clerk.dev'
 const PROXY_PATH = '/__clerk'
 
 function proxyUrlFromRequest(req: VercelRequest) {
-  const configured = process.env.CLERK_PROXY_URL || process.env.VITE_CLERK_PROXY_URL
+  const configured = process.env.CLERK_PROXY_URL
   if (configured) return configured.replace(/\/$/, '')
 
   const host = req.headers['x-forwarded-host'] || req.headers.host
@@ -29,6 +36,32 @@ function rewriteClerkCookie(cookie: string) {
   return [nameValue, ...kept].join('; ')
 }
 
+function upstreamPath(req: VercelRequest) {
+  const pathParam = req.query.path
+  if (Array.isArray(pathParam)) return pathParam.filter(Boolean).join('/')
+  return typeof pathParam === 'string' ? pathParam : ''
+}
+
+/** Keep Clerk query params; drop our rewrite `path` helper. */
+function upstreamSearch(req: VercelRequest) {
+  const raw = req.url || ''
+  const q = raw.includes('?') ? raw.slice(raw.indexOf('?') + 1) : ''
+  if (!q) return ''
+  const params = new URLSearchParams(q)
+  params.delete('path')
+  const out = params.toString()
+  return out ? `?${out}` : ''
+}
+
+async function readRawBody(req: VercelRequest): Promise<Buffer | undefined> {
+  if (req.method === 'GET' || req.method === 'HEAD') return undefined
+  const chunks: Buffer[] = []
+  for await (const chunk of req) {
+    chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : Buffer.from(chunk))
+  }
+  return Buffer.concat(chunks)
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const secret = process.env.CLERK_SECRET_KEY
   if (!secret) {
@@ -36,11 +69,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return
   }
 
-  const pathParam = req.query.path
-  const suffix = Array.isArray(pathParam) ? pathParam.join('/') : pathParam || ''
-  const searchIndex = req.url?.indexOf('?') ?? -1
-  const search = searchIndex >= 0 ? req.url!.slice(searchIndex) : ''
-  const target = `${FAPI}/${suffix}${search}`
+  const suffix = upstreamPath(req)
+  const target = `${FAPI}/${suffix}${upstreamSearch(req)}`
   const proxyUrl = proxyUrlFromRequest(req)
 
   const headers = new Headers()
@@ -64,20 +94,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     headers.set('Origin', proxyHost)
     headers.set('Referer', `${proxyHost}/`)
   } catch {
-    /* ignore */
+    /* ignore invalid proxy URL */
   }
 
-  const init: RequestInit = {
+  const body = await readRawBody(req)
+  const upstream = await fetch(target, {
     method: req.method,
     headers,
+    body,
     redirect: 'manual',
-  }
+  })
 
-  if (req.method !== 'GET' && req.method !== 'HEAD' && req.body != null) {
-    init.body = typeof req.body === 'string' ? req.body : JSON.stringify(req.body)
-  }
-
-  const upstream = await fetch(target, init)
   res.status(upstream.status)
 
   upstream.headers.forEach((value, key) => {
