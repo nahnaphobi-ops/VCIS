@@ -18,7 +18,7 @@ export function DirectorMessage() {
           >
             <img
               src="/photo_2026-08-23_20-36-01.jpg"
-              alt="Mr. Gideon, Director of Victoria Crest International School"
+              alt="Gideon Ahiabli, Director of Victoria Crest International School"
               className="absolute inset-0 h-full w-full object-cover object-[center_22%]"
             />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[var(--navy)]/70 via-transparent to-transparent" />
@@ -65,7 +65,7 @@ export function DirectorMessage() {
             </div>
 
             <div className="mt-8 border-t border-white/15 pt-6">
-              <p className="font-semibold text-white">MR. GIDEON</p>
+              <p className="font-semibold text-white">GIDEON AHIABLI</p>
               <p className="mt-1 text-xs tracking-[0.14em] text-[var(--orange-bright)] uppercase">
                 {school.name}
               </p>
