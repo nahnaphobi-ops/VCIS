@@ -53,13 +53,15 @@ function upstreamSearch(req: VercelRequest) {
   return out ? `?${out}` : ''
 }
 
-async function readRawBody(req: VercelRequest): Promise<Uint8Array | undefined> {
+async function readRawBody(req: VercelRequest): Promise<ArrayBuffer | undefined> {
   if (req.method === 'GET' || req.method === 'HEAD') return undefined
-  const chunks: Uint8Array[] = []
+  const chunks: Buffer[] = []
   for await (const chunk of req) {
     chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : Buffer.from(chunk))
   }
-  return new Uint8Array(Buffer.concat(chunks))
+  const buf = Buffer.concat(chunks)
+  // Standalone ArrayBuffer satisfies fetch BodyInit under TypeScript 6 / Vercel.
+  return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength)
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
