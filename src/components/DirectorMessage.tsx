@@ -65,7 +65,7 @@ export function DirectorMessage() {
             </div>
 
             <div className="mt-8 border-t border-white/15 pt-6">
-              <p className="font-semibold text-white">GIDEON AHIABLI</p>
+              <p className="font-semibold text-white">MR. GIDEON AHIABLI</p>
               <p className="mt-1 text-xs tracking-[0.14em] text-[var(--orange-bright)] uppercase">
                 {school.name}
               </p>
