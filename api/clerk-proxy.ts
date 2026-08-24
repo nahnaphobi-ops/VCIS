@@ -53,9 +53,9 @@ function upstreamSearch(req: VercelRequest) {
   return out ? `?${out}` : ''
 }
 
-async function readRawBody(req: VercelRequest): Promise<Buffer | undefined> {
+async function readRawBody(req: VercelRequest): Promise<Uint8Array | undefined> {
   if (req.method === 'GET' || req.method === 'HEAD') return undefined
-  const chunks: Buffer[] = []
+  const chunks: Uint8Array[] = []
   for await (const chunk of req) {
     chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : Buffer.from(chunk))
   }
