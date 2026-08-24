@@ -59,7 +59,7 @@ async function readRawBody(req: VercelRequest): Promise<Uint8Array | undefined> 
   for await (const chunk of req) {
     chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : Buffer.from(chunk))
   }
-  return Buffer.concat(chunks)
+  return new Uint8Array(Buffer.concat(chunks))
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
