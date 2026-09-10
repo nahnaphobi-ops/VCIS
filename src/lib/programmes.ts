@@ -24,12 +24,12 @@ export const programmes: ProgrammeContent[] = [
     age: 'Ages 2–5',
     summary: 'A warm start to school life — play, language, and the habits that make learning feel safe.',
     focus: 'Language, early numeracy, discovery, creative play, and independence.',
-    heroImage: '/gallery/early-years-1.png',
-    heroPosition: 'center 20%',
+    heroImage: '/gallery/students-pair-girls.jpg',
+    heroPosition: 'center 25%',
     images: [
-      { src: '/gallery/early-years-1.png', position: 'center 20%' },
-      { src: '/gallery/early-years-2.png', position: 'center 40%' },
-      { src: '/gallery/early-years-3.png', position: 'center 30%' },
+      { src: '/gallery/students-pair-girls.jpg', position: 'center 25%' },
+      { src: '/gallery/students-group-candid.jpg', position: 'center 30%' },
+      { src: '/gallery/students-pair-boy-girl.jpg', position: 'center 30%' },
     ],
     intro:
       'Early Years at Victoria Crest is where children first feel that school can be joyful, safe, and full of purpose. We welcome toddlers and young learners into classrooms designed for curiosity, language growth, and confident independence — never rushed, never overlooked.',
@@ -74,9 +74,9 @@ export const programmes: ProgrammeContent[] = [
     summary:
       'Strong core subjects with character formation — learners who can think, write, and work well with others.',
     focus: 'Literacy, numeracy, science, technology, creative expression, and collaboration.',
-    heroImage: '/gallery/play-swings.png',
-    heroPosition: 'center 40%',
-    images: [{ src: '/gallery/play-swings.png', position: 'center 40%' }],
+    heroImage: '/gallery/students-group-formal.jpg',
+    heroPosition: 'center 30%',
+    images: [{ src: '/gallery/students-group-formal.jpg', position: 'center 30%' }],
     intro:
       'Primary at Victoria Crest builds the academic foundation and character habits families trust for the long term. Learners move from guided discovery into clearer subject learning while staying curious, respectful, and proud of careful work.',
     approach:
@@ -120,9 +120,9 @@ export const programmes: ProgrammeContent[] = [
     summary:
       'Deeper academic challenge and guidance as students prepare for the next stage of their education.',
     focus: 'Subject mastery, critical thinking, leadership, examination readiness, and life skills.',
-    heroImage: '/gallery/students-picnic-girls.png',
+    heroImage: '/gallery/students-pair-boy-girl.jpg',
     heroPosition: 'center 30%',
-    images: [{ src: '/gallery/students-picnic-girls.png', position: 'center 30%' }],
+    images: [{ src: '/gallery/students-pair-boy-girl.jpg', position: 'center 30%' }],
     intro:
       'Junior High at Victoria Crest stretches learners academically while keeping character and purpose at the centre. Students deepen subject mastery, practise independent study habits, and prepare for the next stage of schooling with confidence rather than anxiety.',
     approach:

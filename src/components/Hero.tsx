@@ -13,10 +13,10 @@ export function Hero() {
     <section id="top" className="relative isolate overflow-hidden bg-[var(--navy)] text-white">
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         <motion.img
-          src="/hero-campus.png"
+          src="/gallery/students-group-arms-crossed.jpg"
           alt=""
           className="absolute inset-0 h-full w-full object-cover object-[center_28%] opacity-55"
-          initial={reduceMotion ? false : { scale: 1.12 }}
+          initial={reduceMotion ? false : { scale: 1.04 }}
           animate={{ scale: 1 }}
           transition={{ duration: 10, ease: easeOutExpo }}
         />
@@ -64,17 +64,17 @@ export function Hero() {
 
         <div className="relative mx-auto hidden h-[28rem] w-full max-w-lg lg:block">
           <div className="absolute top-6 right-0 h-64 w-72 overflow-hidden rounded-[1.25rem] border-4 border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.28)]">
-            <img src="/gallery/school-building.png" alt="" className="h-full w-full object-cover" />
+            <img src="/gallery/students-group-studio.jpg" alt="" className="h-full w-full object-cover" />
           </div>
           <div className="absolute bottom-8 left-0 h-52 w-52 overflow-hidden rounded-[1.25rem] border-4 border-[var(--orange)] shadow-[0_16px_40px_rgba(0,0,0,0.28)]">
             <img
-              src="/gallery/students-picnic-girls.png"
+              src="/gallery/students-pair-boy-girl.jpg"
               alt=""
               className="h-full w-full object-cover object-[center_30%]"
             />
           </div>
           <div className="absolute top-0 left-10 h-28 w-28 overflow-hidden rounded-full border-4 border-[var(--teal)] shadow-[0_12px_30px_rgba(0,0,0,0.25)]">
-            <img src="/gallery/culture-day-girls-1.png" alt="" className="h-full w-full object-cover object-[center_25%]" />
+            <img src="/gallery/students-group-candid.jpg" alt="" className="h-full w-full object-cover object-center" />
           </div>
           <div className="absolute right-10 bottom-0 h-16 w-16 overflow-hidden rounded-full bg-white shadow-lg">
             <img src="/crest.png" alt="" className="h-full w-full object-contain" />

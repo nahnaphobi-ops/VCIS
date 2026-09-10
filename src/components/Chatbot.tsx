@@ -25,7 +25,7 @@ type Message = {
 
 const welcomeMessage: Message = {
   role: 'assistant',
-  content: `Hello. I’m the Victoria Crest assistant. I can help with admissions, programmes, term dates, enrolment documents, and other school information from EduTrack. How can I help your family today?`,
+  content: `Hello! Welcome to Victoria Crest. We're happy you're here. I can help with admissions, programmes, term dates, enrolment documents, and anything else about our school. How can I help your family today?`,
 }
 
 const suggestions = [
@@ -240,16 +240,17 @@ export function Chatbot() {
         </section>
       )}
 
-      <button
-        type="button"
-        onClick={() => setOpen((current) => !current)}
-        className="ml-auto flex items-center gap-2 rounded-full bg-[var(--orange)] px-4 py-3 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,0,0,0.25)] transition hover:-translate-y-0.5 hover:bg-[var(--orange-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-        aria-expanded={open}
-        aria-controls="school-chat"
-      >
-        <span aria-hidden="true" className="text-base">?</span>
-        {open ? 'Close chat' : 'Ask us anything'}
-      </button>
+      <div className="ml-auto">
+        <button
+          type="button"
+          onClick={() => setOpen((current) => !current)}
+          className="relative flex items-center gap-2 rounded-2xl rounded-br-sm bg-[var(--orange)] px-5 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,0,0,0.25)] transition hover:-translate-y-0.5 hover:bg-[var(--orange-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          aria-expanded={open}
+          aria-controls="school-chat"
+        >
+          {open ? 'Close chat' : 'Talk to the Admin'}
+        </button>
+      </div>
     </div>
   )
 }

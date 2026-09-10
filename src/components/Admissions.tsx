@@ -7,19 +7,19 @@ const steps = [
     step: '01',
     title: 'Enquire',
     body: 'Call, WhatsApp, or send a short message with your child’s age and the class you are interested in.',
-    image: '/gallery/school-building.png',
+    image: '/gallery/students-group-portrait.jpg',
   },
   {
     step: '02',
     title: 'Visit & apply',
     body: 'We share school life, placement, and the documents our admissions team needs for your family.',
-    image: '/gallery/students-picnic-girls.png',
+    image: '/gallery/students-group-formal.jpg',
   },
   {
     step: '03',
     title: 'Confirm enrolment',
     body: 'Once placement is confirmed, we welcome your child into the Victoria Crest community.',
-    image: '/gallery/group-steps.png',
+    image: '/gallery/students-group-candid.jpg',
   },
 ]
 

@@ -13,7 +13,7 @@ export function PageHero({
   kicker,
   title,
   description,
-  image = '/gallery/school-building.png',
+  image = '/gallery/students-group-portrait.jpg',
   imagePosition = 'center 30%',
   cta,
 }: PageHeroProps) {

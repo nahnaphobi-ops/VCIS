@@ -7,7 +7,7 @@ export type CommunityPost = {
   title: string
   kicker: string
   image: string
-  position: string
+  position?: string
   excerpt: string
   body: string[]
   highlights: Array<{ title: string; body: string }>
@@ -17,16 +17,15 @@ export type CommunityPost = {
 export const communityPosts: CommunityPost[] = [
   {
     slug: 'culture-day',
-    title: 'Culture day celebrations on campus',
-    kicker: 'School life',
-    image: '/gallery/culture-day-girls-1.png',
-    position: 'center 25%',
+    title: 'Excellence in every learner',
+    kicker: 'Our Students',
+    image: '/gallery/students-group-studio.jpg',
     excerpt:
-      'Colour, music, and heritage fill the campus when Victoria Crest celebrates Ghanaian culture and identity together.',
+      'Victoria Crest students stand tall in their uniforms — confident, prepared, and ready to purpose.',
     body: [
       'Culture Day is one of the moments families remember most. Learners arrive in traditional attire, classrooms open into song and story, and the school grounds become a living gallery of Ghanaian heritage — from Kente patterns to regional songs and proud family histories.',
-      'Teachers use the day to connect identity with learning. Younger children practise greetings, colours, and stories from home. Older learners discuss respect, belonging, and how cultural confidence supports academic courage. The crest’s call to Purpose is visible here: education that helps children know who they are as they grow into who they can become.',
-      'Parents and guardians are part of the celebration. Photos, conversations at the gate, and shared meals turn a school event into a community memory. For many children, Culture Day is the first time they see classmates’ home traditions side by side — and realise difference can be a reason for friendship rather than distance.',
+      'Teachers use the day to connect identity with learning. Younger children practise greetings, colours, and stories from home. Older learners discuss respect, belonging, and how cultural confidence supports academic courage. The crest\'s call to Purpose is visible here: education that helps children know who they are as they grow into who they can become.',
+      'Parents and guardians are part of the celebration. Photos, conversations at the gate, and shared meals turn a school event into a community memory. For many children, Culture Day is the first time they see classmates\' home traditions side by side — and realise difference can be a reason for friendship rather than distance.',
       'We also treat Culture Day as formation, not only festivity. Students practise courtesy with visitors, care for shared spaces, and represent Victoria Crest with integrity. Excellence shows up in preparation: rehearsed performances, tidy presentations, and pride in doing small things well.',
     ],
     highlights: [
@@ -48,12 +47,12 @@ export const communityPosts: CommunityPost[] = [
   },
   {
     slug: 'campus-moments',
-    title: 'Friends, play, and lunch outdoors',
-    kicker: 'Campus moments',
-    image: '/gallery/lunch-boys.png',
+    title: 'Friendship built on integrity',
+    kicker: 'Campus Life',
+    image: '/gallery/students-pair-boy-girl.jpg',
     position: 'center 40%',
     excerpt:
-      'Between lessons, outdoor lunch tables and play spaces give learners room to rest, laugh, and practise kindness.',
+      'At Victoria Crest, friendships grow through kindness, respect, and shared purpose in and out of the classroom.',
     body: [
       'A strong school is measured in classrooms — and also in the quieter minutes between them. At Victoria Crest, outdoor lunch tables, play areas, and open campus corners are part of how children learn to share, wait their turn, solve small disagreements, and look after one another.',
       'Teachers and staff keep a watchful presence without turning break into another formal lesson. Children practise independence: packing lunch, choosing friends wisely, including someone who is sitting alone, and returning ready to learn. These habits are Integrity in everyday form.',
@@ -79,12 +78,11 @@ export const communityPosts: CommunityPost[] = [
   },
   {
     slug: 'growing-family',
-    title: 'A growing family in Kumasi',
-    kicker: `${school.facebookFollowers} followers`,
-    image: '/gallery/group-steps.png',
-    position: 'center 30%',
+    title: 'Purpose-driven learning',
+    kicker: 'Academic Excellence',
+    image: '/gallery/students-group-formal.jpg',
     excerpt:
-      'From the school gate to Facebook, Victoria Crest keeps families connected to celebrations, updates, and everyday pride.',
+      'Every Victoria Crest learner is guided by purpose — to grow, to contribute, to lead with integrity.',
     body: [
       `Victoria Crest began serving families in ${school.location} in ${school.established}. Since then, the school community has grown through word of mouth, campus visits, and a Facebook family that now numbers ${school.facebookFollowers} followers staying close to school life.`,
       'That growth matters because education is never only a timetable. Parents want to know their child is known, challenged, and celebrated. Our updates — assemblies, Culture Day, sports, and quiet classroom wins — help families feel present even when they cannot be on campus every hour.',

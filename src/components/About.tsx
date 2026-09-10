@@ -74,22 +74,22 @@ export function About() {
           >
             <div className="absolute top-0 left-0 h-[58%] w-[58%] overflow-hidden rounded-[1.25rem] shadow-[var(--shadow)]">
               <img
-                src="/gallery/school-building.png"
-                alt="Victoria Crest campus building"
+                src="/gallery/students-group-formal.jpg"
+                alt="Victoria Crest learners in uniform"
                 className="h-full w-full object-cover"
               />
             </div>
             <div className="absolute top-6 right-0 h-[42%] w-[48%] overflow-hidden rounded-[1.25rem] border-4 border-[var(--orange)] shadow-[var(--shadow)]">
               <img
-                src="/gallery/lunch-boys.png"
-                alt="Students sharing lunch outdoors"
-                className="h-full w-full object-cover object-[center_35%]"
+                src="/gallery/students-pair-boy-girl.jpg"
+                alt="Two Victoria Crest students in uniform"
+                className="h-full w-full object-cover object-[center_30%]"
               />
             </div>
             <div className="absolute bottom-0 left-8 h-[38%] w-[55%] overflow-hidden rounded-[1.25rem] border-4 border-[var(--teal)] shadow-[var(--shadow)]">
               <img
-                src="/gallery/culture-day-girls-2.png"
-                alt="Learners celebrating culture day"
+                src="/gallery/students-group-candid.jpg"
+                alt="Victoria Crest learners sharing a moment together"
                 className="h-full w-full object-cover object-[center_30%]"
               />
             </div>

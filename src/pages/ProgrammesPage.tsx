@@ -10,7 +10,7 @@ export function ProgrammesPage() {
         kicker="Programmes"
         title="Early Years, Primary, and Junior High pathways."
         description="Each stage builds on the one before it — with clear age bands, learning focus, and guidance through every transition."
-        image="/gallery/early-years-1.png"
+        image="/gallery/students-pair-girls.jpg"
         imagePosition="center 20%"
         cta={{ to: '/contact', label: 'Ask about placement' }}
       />

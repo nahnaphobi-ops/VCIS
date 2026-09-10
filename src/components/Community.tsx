@@ -44,12 +44,12 @@ export function Community() {
               className="card overflow-hidden"
               variants={reduceMotion ? undefined : fadeUp}
             >
-              <div className="h-48 overflow-hidden">
+              <div className="aspect-[4/3] overflow-hidden">
                 <img
                   src={post.image}
                   alt=""
                   className="h-full w-full object-cover"
-                  style={{ objectPosition: post.position }}
+                  style={post.position ? { objectPosition: post.position } : { objectPosition: 'center top' }}
                 />
               </div>
               <div className="p-6">

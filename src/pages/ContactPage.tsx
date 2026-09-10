@@ -10,7 +10,7 @@ export function ContactPage() {
         kicker="Contact"
         title="Talk with the Victoria Crest team."
         description={`Official line ${school.phoneDisplay} / ${school.phoneSecondaryDisplay}. Or send a WhatsApp enquiry and we will reply.`}
-        image="/gallery/lunch-tables.png"
+        image="/gallery/students-group-studio.jpg"
         imagePosition="center 45%"
       />
       <Contact />

@@ -12,8 +12,8 @@ export function AdmissionsPage() {
         kicker="Admissions"
         title="A clear path from first enquiry to enrolment."
         description={`Call ${school.phoneDisplay}, WhatsApp, or submit the online form. Applications go straight to the school’s EduTrack admissions dashboard.`}
-        image="/gallery/group-steps.png"
-        imagePosition="center 28%"
+        image="/gallery/students-group-formal.jpg"
+        imagePosition="center 30%"
         cta={{ to: '/admissions#apply', label: 'Apply online' }}
       />
       <Admissions />

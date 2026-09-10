@@ -79,26 +79,26 @@ export function WhyUs() {
               <CirclePhoto
                 wrapClassName="inset-[12%]"
                 ringClassName="ring-8 ring-[var(--cream-muted)]"
-                src="/gallery/group-steps.png"
-                imgClassName="origin-center scale-110 object-[center_42%]"
+                src="/gallery/students-group-formal.jpg"
+                imgClassName="object-center"
               />
               <CirclePhoto
                 wrapClassName="top-2 right-8 h-24 w-24"
                 ringClassName="ring-4 ring-white"
-                src="/gallery/culture-day-young.png"
-                imgClassName="origin-center scale-125 object-[center_22%]"
+                src="/gallery/students-group-candid.jpg"
+                imgClassName="object-center"
               />
               <CirclePhoto
                 wrapClassName="bottom-6 left-2 h-28 w-28"
                 ringClassName="ring-4 ring-[var(--orange)]"
-                src="/gallery/play-swings.png"
-                imgClassName="origin-center scale-125 object-[center_42%]"
+                src="/gallery/students-pair-girls.jpg"
+                imgClassName="object-center"
               />
               <CirclePhoto
                 wrapClassName="right-0 bottom-16 h-20 w-20"
                 ringClassName="ring-4 ring-[var(--teal)]"
-                src="/gallery/culture-day-boy.png"
-                imgClassName="origin-center scale-125 object-[center_30%]"
+                src="/gallery/students-pair-boy-girl.jpg"
+                imgClassName="object-center"
               />
             </div>
 
@@ -150,9 +150,9 @@ export function WhyUs() {
             </div>
             <div className="relative hidden min-h-[16rem] lg:block">
               <img
-                src="/gallery/lunch-tables.png"
+                src="/gallery/students-group-studio.jpg"
                 alt=""
-                className="absolute inset-0 h-full w-full object-cover object-[center_45%]"
+                className="absolute inset-0 h-full w-full object-cover object-[center_35%]"
               />
               <div className="absolute inset-0 bg-gradient-to-l from-transparent to-[var(--orange)]" />
             </div>

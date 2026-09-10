@@ -22,7 +22,6 @@ export function CommunityPostPage() {
         title={post.title}
         description={post.excerpt}
         image={post.image}
-        imagePosition={post.position}
         cta={{ to: '/gallery', label: 'View gallery' }}
       />
 
@@ -71,7 +70,7 @@ export function CommunityPostPage() {
                 src={post.image}
                 alt=""
                 className="aspect-[4/5] w-full object-cover"
-                style={{ objectPosition: post.position }}
+                style={post.position ? { objectPosition: post.position } : { objectPosition: 'center top' }}
               />
             </div>
             <div className="rounded-[1.25rem] bg-[var(--navy)] p-6 text-white">
@@ -109,7 +108,7 @@ export function CommunityPostPage() {
                       src={item.image}
                       alt=""
                       className="h-full w-full object-cover"
-                      style={{ objectPosition: item.position }}
+                      style={item.position ? { objectPosition: item.position } : { objectPosition: 'center top' }}
                     />
                   </div>
                   <div className="p-5">

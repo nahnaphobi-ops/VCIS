@@ -10,7 +10,7 @@ export function AboutPage() {
         kicker="About"
         title={`A Kumasi school guided by ${school.motto}`}
         description={`${school.name} has served families since ${school.established}. We raise young people who learn with purpose and lead with integrity.`}
-        image="/gallery/school-building.png"
+        image="/gallery/students-group-portrait.jpg"
         cta={{ to: '/admissions', label: 'Start admissions' }}
       />
       <About />

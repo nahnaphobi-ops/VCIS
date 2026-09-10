@@ -9,7 +9,7 @@ export function GalleryPage() {
         kicker="Gallery"
         title="Moments from school life in Kumasi."
         description="Learning, play, culture, and community — browse campus life and follow more updates on Facebook."
-        image="/gallery/culture-day-girls-1.png"
+        image="/gallery/students-pair-girls.jpg"
         imagePosition="center 25%"
         cta={{ to: '/contact', label: 'Book a visit' }}
       />
