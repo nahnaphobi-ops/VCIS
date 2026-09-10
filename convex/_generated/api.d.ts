@@ -9,6 +9,8 @@
  */
 
 import type * as content from "../content.js";
+import type * as crons from "../crons.js";
+import type * as facebookSync from "../facebookSync.js";
 import type * as http from "../http.js";
 
 import type {
@@ -19,6 +21,8 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   content: typeof content;
+  crons: typeof crons;
+  facebookSync: typeof facebookSync;
   http: typeof http;
 }>;
 

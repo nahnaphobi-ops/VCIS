@@ -25,6 +25,7 @@ export default defineSchema({
     sortOrder: v.number(),
     createdAt: v.number(),
     updatedAt: v.number(),
+    sourceId: v.optional(v.string()),
   })
     .index('by_published', ['isPublished', 'sortOrder'])
     .index('by_updated', ['updatedAt']),

@@ -8,6 +8,7 @@ import { AdmissionsPage } from './pages/AdmissionsPage'
 import { GalleryPage } from './pages/GalleryPage'
 import { ContactPage } from './pages/ContactPage'
 import { CommunityPostPage } from './pages/CommunityPostPage'
+import { AnnouncementsPage } from './pages/AnnouncementsPage'
 import { AdminPage, AdminUnavailable } from './components/AdminPage'
 
 const adminConfigured = Boolean(
@@ -26,6 +27,7 @@ export default function App() {
           <Route path="programmes/:slug" element={<ProgrammeDetailPage />} />
           <Route path="admissions" element={<AdmissionsPage />} />
           <Route path="gallery" element={<GalleryPage />} />
+          <Route path="announcements" element={<AnnouncementsPage />} />
           <Route path="community/:slug" element={<CommunityPostPage />} />
           <Route path="contact" element={<ContactPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
