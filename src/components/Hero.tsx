@@ -74,10 +74,11 @@ function UniformCarousel() {
     if (!track) return
     const card = track.children[active] as HTMLElement | undefined
     if (!card) return
-    card.scrollIntoView({
+    // Scroll only the carousel track — never the page (scrollIntoView was yanking users up).
+    const left = card.offsetLeft - (track.clientWidth - card.clientWidth) / 2
+    track.scrollTo({
+      left: Math.max(0, left),
       behavior: reduceMotion ? 'auto' : 'smooth',
-      inline: 'center',
-      block: 'nearest',
     })
   }, [active, reduceMotion])
 
