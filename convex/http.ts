@@ -116,7 +116,7 @@ const STATIC_SCHOOL_FACTS = `Static school facts (always true):
 - Location: Kumasi / Afigya Kwabre South, Ashanti Region, Ghana
 - Primary phone: 059 977 2383 (+233 59 977 2383)
 - Secondary phone: 024 201 9659 (+233 24 201 9659)
-- WhatsApp enquiry number: +233 24 201 9659
+- WhatsApp enquiry number: +233 59 977 2383 (059 977 2383)
 - Website: vcis.edu.gh
 - Accreditations: Ghana Education Service (GES), National Schools Inspectorate Authority (NaSIA)
 - Programme bands (marketing only — never invent class rooms or subjects from this list):
@@ -332,7 +332,7 @@ async function completeWithOpenRouter(
   return FALLBACK_ADMISSIONS_REPLY
 }
 
-const FALLBACK_ADMISSIONS_REPLY = `**1. Enquire** – Call **059 977 2383** or WhatsApp **024 201 9659**, or use the online form at **/admissions**.
+const FALLBACK_ADMISSIONS_REPLY = `**1. Enquire** – Call or WhatsApp **059 977 2383**, or use the online form at **/admissions**.
 
 **2. Apply & submit documents** – Share your child’s details and bring the birth certificate, two passport photos, and a parent/guardian ID. Transferring learners may also share a recent school report.
 

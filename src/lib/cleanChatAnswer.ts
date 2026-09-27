@@ -42,7 +42,7 @@ export function cleanChatAnswer(raw: string) {
   return text
 }
 
-const FALLBACK_ADMISSIONS_REPLY = `**1. Enquire** – Call **059 977 2383** or WhatsApp **024 201 9659**, or use the online form at **/admissions**.
+const FALLBACK_ADMISSIONS_REPLY = `**1. Enquire** – Call or WhatsApp **059 977 2383**, or use the online form at **/admissions**.
 
 **2. Apply & submit documents** – Share your child’s details and bring the birth certificate, two passport photos, and a parent/guardian ID. Transferring learners may also share a recent school report.
 
