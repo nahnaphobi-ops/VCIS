@@ -126,7 +126,7 @@ const STATIC_SCHOOL_FACTS = `Static school facts (always true):
 - Active class rooms, class levels, and subjects MUST come only from Live EduTrack public data below. If a level (e.g. SHS) has no room there, do not offer it.
 - Admissions path: 1) Enquire (call / WhatsApp / online form) → 2) Visit & apply with documents → 3) Confirm enrolment after placement
 - Online applications: submit at /admissions on the school website; applications land in the EduTrack admissions inbox for staff review (they do not auto-enrol)
-- Community: Facebook page https://www.facebook.com/newdestinschool`
+- Community: Facebook page https://www.facebook.com/victoriacrestinternationalschool`
 
 const AGENT_RULES = `You are the Victoria Crest International School website assistant for parents and guardians.
 

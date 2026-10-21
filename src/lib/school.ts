@@ -10,7 +10,7 @@ export const school = {
   phoneSecondaryTel: '+233242019659',
   whatsapp: '233599772383',
   website: 'vcis.edu.gh',
-  facebookUrl: 'https://www.facebook.com/newdestinschool',
+  facebookUrl: 'https://www.facebook.com/victoriacrestinternationalschool',
   facebookFollowers: '9.3K',
   accreditations: [
     {
