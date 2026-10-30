@@ -1,7 +1,8 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
-import { SignInButton, UserButton, UserProfile, useAuth, useUser } from '@clerk/clerk-react'
+import { SignInButton, UserButton, UserProfile, useAuth, useClerk, useUser } from '@clerk/clerk-react'
 import { useMutation, useQuery } from 'convex/react'
 import { api } from '../lib/convexApi'
+import { useIdleLogout } from '../lib/useIdleLogout'
 
 type ContentTab = 'overview' | 'announcements' | 'photos' | 'account'
 
@@ -24,8 +25,11 @@ const clerkAppearance = {
 export function AdminPage() {
   const { isLoaded, isSignedIn } = useAuth()
   const { user } = useUser()
+  const { signOut } = useClerk()
   const [tab, setTab] = useState<ContentTab>('overview')
   const [loadTimedOut, setLoadTimedOut] = useState(false)
+
+  useIdleLogout(Boolean(isSignedIn), () => signOut({ redirectUrl: '/admin' }))
 
   useEffect(() => {
     if (isLoaded) {
