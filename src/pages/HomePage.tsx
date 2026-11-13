@@ -2,6 +2,7 @@ import { Hero } from '../components/Hero'
 import { Stats } from '../components/Stats'
 import { Programmes } from '../components/Programmes'
 import { DirectorMessage } from '../components/DirectorMessage'
+import { StaffCarousel } from '../components/StaffCarousel'
 import { SchoolUpdates } from '../components/SchoolUpdates'
 import { Announcements } from '../components/Announcements'
 import { WhyUs } from '../components/WhyUs'
@@ -15,6 +16,7 @@ export function HomePage() {
       <Stats />
       <Programmes />
       <DirectorMessage />
+      <StaffCarousel />
       <SchoolUpdates />
       <Announcements />
       <WhyUs />
