@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { fadeUp, staggerFast, viewportOnce } from '../lib/motion'
 import { useQuery } from 'convex/react'
 import { api } from '../lib/convexApi'
+import { getPinnedAnnouncements } from '../lib/pinnedAnnouncements'
 import { IconArrow } from './icons'
 
 type Announcement = {
@@ -17,17 +18,28 @@ type Announcement = {
 export function Announcements() {
   const reduceMotion = useReducedMotion() ?? false
 
-  if (!import.meta.env.VITE_CONVEX_URL) return null
+  if (!import.meta.env.VITE_CONVEX_URL) {
+    return <AnnouncementsSection announcements={getPinnedAnnouncements()} reduceMotion={reduceMotion} />
+  }
 
   return <LiveAnnouncementsInner reduceMotion={reduceMotion} />
 }
 
 function LiveAnnouncementsInner({ reduceMotion }: { reduceMotion: boolean }) {
-  const announcements = useQuery(api.content.listPublicAnnouncements, {}) as
-    | Announcement[]
-    | undefined
+  const live = useQuery(api.content.listPublicAnnouncements, {}) as Announcement[] | undefined
 
-  if (!announcements?.length) return null
+  // Pinned announcements take the featured slot ahead of admin-posted ones.
+  return <AnnouncementsSection announcements={[...getPinnedAnnouncements(), ...(live ?? [])]} reduceMotion={reduceMotion} />
+}
+
+function AnnouncementsSection({
+  announcements,
+  reduceMotion,
+}: {
+  announcements: Announcement[]
+  reduceMotion: boolean
+}) {
+  if (!announcements.length) return null
 
   const featured = announcements[0]
   const rest = announcements.slice(1, 5)
@@ -69,11 +81,11 @@ function LiveAnnouncementsInner({ reduceMotion }: { reduceMotion: boolean }) {
             variants={reduceMotion ? undefined : fadeUp}
           >
             {featured.imageUrl && featured.attachmentType?.startsWith('image/') ? (
-              <div className="aspect-[16/10] overflow-hidden bg-[var(--cream)]">
+              <div className="bg-[var(--cream)]">
                 <img
                   src={featured.imageUrl}
                   alt={featured.title}
-                  className="h-full w-full object-cover"
+                  className="max-h-[32rem] w-full object-contain"
                   loading="lazy"
                 />
               </div>
@@ -85,7 +97,7 @@ function LiveAnnouncementsInner({ reduceMotion }: { reduceMotion: boolean }) {
               <h3 className="mt-2 text-xl font-extrabold text-[var(--navy)] sm:text-2xl">
                 {featured.title}
               </h3>
-              <p className="mt-3 text-sm leading-relaxed text-[var(--muted)] md:text-base">
+              <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-[var(--muted)] md:text-base">
                 {featured.body}
               </p>
               {featured.imageUrl && !featured.attachmentType?.startsWith('image/') ? (

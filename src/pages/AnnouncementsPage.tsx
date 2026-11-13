@@ -5,6 +5,7 @@ import { Contact } from '../components/Contact'
 import { fadeUp, staggerFast, viewportOnce } from '../lib/motion'
 import { useQuery } from 'convex/react'
 import { api } from '../lib/convexApi'
+import { getPinnedAnnouncements } from '../lib/pinnedAnnouncements'
 import { IconArrow } from '../components/icons'
 
 type Announcement = {
@@ -125,11 +126,11 @@ function LiveAnnouncementsPage({
   reduceMotion: boolean
   setActive: (a: Announcement | null) => void
 }) {
-  const announcements = useQuery(api.content.listPublicAnnouncements, {}) as
-    | Announcement[]
-    | undefined
+  const live = useQuery(api.content.listPublicAnnouncements, {}) as Announcement[] | undefined
+  // Pinned announcements come first, ahead of admin-posted ones.
+  const announcements: Announcement[] = [...getPinnedAnnouncements(), ...(live ?? [])]
 
-  if (!announcements?.length) return null
+  if (!announcements.length) return null
 
   return (
     <section className="section-pad bg-[var(--cream)]">
@@ -156,7 +157,7 @@ function LiveAnnouncementsPage({
                   <img
                     src={item.imageUrl}
                     alt={item.title}
-                    className="h-full w-full object-cover transition duration-500 hover:scale-105"
+                    className="h-full w-full object-contain transition duration-500 hover:scale-105"
                     loading="lazy"
                   />
                 </button>
