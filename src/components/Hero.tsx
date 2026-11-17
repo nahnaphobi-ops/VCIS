@@ -191,7 +191,7 @@ export function Hero() {
           animate={{ scale: 1 }}
           transition={{ duration: 10, ease: easeOutExpo }}
         />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(12,27,53,0.88)_0%,rgba(12,27,53,0.72)_42%,rgba(12,27,53,0.9)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(12,27,53,0.6)_0%,rgba(12,27,53,0.42)_42%,rgba(12,27,53,0.65)_100%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_20%,rgba(12,27,53,0.15),transparent_55%)]" />
         <div
           className="absolute inset-0 opacity-[0.16]"
