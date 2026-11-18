@@ -117,7 +117,9 @@ const STATIC_SCHOOL_FACTS = `Static school facts (always true):
 - Primary phone: 059 977 2383 (+233 59 977 2383)
 - Secondary phone: 024 201 9659 (+233 24 201 9659)
 - WhatsApp enquiry number: +233 59 977 2383 (059 977 2383)
-- Website: vcis.edu.gh
+- Website: vcis.com.gh
+- General enquiries email: info@vcis.com.gh
+- Admissions email: admissions@vcis.com.gh
 - Accreditations: Ghana Education Service (GES), National Schools Inspectorate Authority (NaSIA)
 - Programme bands (marketing only — never invent class rooms or subjects from this list):
   • Early Years (ages 2–5)
@@ -296,7 +298,7 @@ async function completeWithOpenRouter(
       headers: {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://vcis.edu.gh',
+        'HTTP-Referer': 'https://vcis.com.gh',
         'X-Title': 'Victoria Crest Admissions Assistant',
       },
       body: JSON.stringify({

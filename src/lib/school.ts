@@ -9,7 +9,9 @@ export const school = {
   phoneSecondaryDisplay: '024 201 9659',
   phoneSecondaryTel: '+233242019659',
   whatsapp: '233599772383',
-  website: 'vcis.edu.gh',
+  website: 'vcis.com.gh',
+  emailInfo: 'info@vcis.com.gh',
+  emailAdmissions: 'admissions@vcis.com.gh',
   facebookUrl: 'https://www.facebook.com/victoriacrestinternationalschool',
   facebookFollowers: '9.3K',
   accreditations: [

@@ -142,6 +142,19 @@ export function Footer() {
                   <IconPin className="mt-0.5 h-4 w-4 text-[var(--teal)]" />
                   {school.location}
                 </li>
+                <li>
+                  <a href={`mailto:${school.emailInfo}`} className="text-white hover:text-[var(--orange-bright)]">
+                    {school.emailInfo}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`mailto:${school.emailAdmissions}`}
+                    className="text-white hover:text-[var(--orange-bright)]"
+                  >
+                    {school.emailAdmissions}
+                  </a>
+                </li>
                 <li>{school.website}</li>
               </ul>
             </div>

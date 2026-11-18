@@ -25,4 +25,4 @@ Allow: /
 User-agent: anthropic-ai
 Allow: /
 
-Sitemap: https://vcis.edu.gh/sitemap.xml
+Sitemap: https://vcis.com.gh/sitemap.xml

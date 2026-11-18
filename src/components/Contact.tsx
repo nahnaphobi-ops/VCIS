@@ -134,7 +134,25 @@ export function Contact() {
                 {school.phoneSecondaryDisplay}
               </a>
             </li>
-            {live?.email ? (
+            <li>
+              General:{' '}
+              <a
+                href={`mailto:${school.emailInfo}`}
+                className="font-semibold text-white hover:text-[var(--orange-bright)]"
+              >
+                {school.emailInfo}
+              </a>
+            </li>
+            <li>
+              Admissions:{' '}
+              <a
+                href={`mailto:${school.emailAdmissions}`}
+                className="font-semibold text-white hover:text-[var(--orange-bright)]"
+              >
+                {school.emailAdmissions}
+              </a>
+            </li>
+            {live?.email && live.email !== school.emailInfo && live.email !== school.emailAdmissions ? (
               <li>
                 Email:{' '}
                 <a

@@ -24,7 +24,7 @@
    ```
 3. Optional secrets / env for the function:
    - `PUBLIC_WEBSITE_SCHOOL_IDS=victoria-crest-international-school`
-   - `PUBLIC_WEBSITE_ORIGINS=http://localhost:5173,https://vcis-alpha.vercel.app,https://vcis.edu.gh,https://www.vcis.edu.gh`
+   - `PUBLIC_WEBSITE_ORIGINS=http://localhost:5173,https://vcis-alpha.vercel.app,https://vcis.com.gh,https://www.vcis.com.gh`
 
 ## Vercel (vcis-alpha.vercel.app)
 

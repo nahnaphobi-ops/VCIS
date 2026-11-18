@@ -28,8 +28,8 @@ function withClerk(children: ReactNode) {
         'http://localhost:5173',
         'http://127.0.0.1:5173',
         'https://vcis-alpha.vercel.app',
-        'https://vcis.edu.gh',
-        'https://www.vcis.edu.gh',
+        'https://vcis.com.gh',
+        'https://www.vcis.com.gh',
       ]}
     >
       {children}
