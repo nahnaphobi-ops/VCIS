@@ -50,6 +50,26 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://vcis.com.gh/announcements</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://vcis.com.gh/community/culture-day</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://vcis.com.gh/community/campus-moments</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://vcis.com.gh/community/growing-family</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://vcis.com.gh/contact</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
